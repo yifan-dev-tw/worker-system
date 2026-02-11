@@ -89,45 +89,46 @@ h2 {
 
 <div class="main">
 
+  <!-- 員工資料登記 -->
   <div class="card">
     <h2>員工資料登記</h2>
+
+    <label>姓名</label>
+    <input id="name">
+
+    <label>電話</label>
+    <input id="phone">
+
+    <button onclick="submitData()">新增員工</button>
+    <button onclick="showWorkers()">查看名單</button>
+  </div>
+
+  <!-- 員工列表 -->
   <div class="card">
     <h2>員工列表</h2>
     <div id="workerList"></div>
   </div>
 
-    姓名
-    <input id="name">
-
-    電話
-    <input id="phone">
-
-    <button onclick="submitData()">新增員工</button>
-    <button onclick="showWorkers()">查看名單</button>
-
-    <div id="result"></div>
-  </div>
-
+  <!-- 派工紀錄 -->
   <div class="card">
     <h2>派工紀錄</h2>
+
+    <label>員工</label>
+    <select id="dispatchName"></select>
+
+    <label>工作地點</label>
+    <input id="dispatchLocation">
+
+    <label>日期</label>
+    <input id=ㄍ"dispatchDate" placeholder="YYYY-MM-DD">
+
+    <button onclick="addDispatch()">記錄派工</button>
+  </div>
+
+  <!-- 派工列表 -->
   <div class="card">
     <h2>派工列表</h2>
     <div id="dispatchList"></div>
-  </div>
-    
-    員工
-    <select id="dispatchName"></select>
-
-    工作地點
-    <input id="dispatchLocation">
-
-    日期
-    <input id="dispatchDate" placeholder="YYYY-MM-DD">
-
-    <button onclick="addDispatch()">記錄派工</button>
-    <button onclick="showDispatch()">查看派工</button>
-
-    <div id="dispatchResult"></div>
   </div>
 
 </div>
