@@ -3,41 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <title>人力派遣系統</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0 16px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
 </head>
+
 <body>
 
-<h2>工人資料登記</h2>
+<div class="container">
 
-姓名：
-<input id="name"><br><br>
+  <div class="card">
+    <h2>工人資料登記</h2>
 
-電話：
-<input id="phone"><br><br>
+    姓名
+    <input id="name">
 
-<button onclick="submitData()">送出資料</button>
-<button onclick="showWorkers()">查看工人名單</button>
+    電話
+    <input id="phone">
 
-<hr>
+    <button onclick="submitData()">新增工人</button>
+    <button onclick="showWorkers()">查看名單</button>
 
-<h2>派工紀錄</h2>
+    <div id="result"></div>
+  </div>
 
-工人姓名：
-<select id="dispatchName"></select><br><br>
+  <div class="card">
+    <h2>派工紀錄</h2>
 
-工作地點：
-<input id="dispatchLocation"><br><br>
+    工人
+    <select id="dispatchName"></select>
 
-日期：
-<input id="dispatchDate" type="date"><br><br>
+    工作地點
+    <input id="dispatchLocation">
 
-<button onclick="addDispatch()">記錄派工</button>
+    日期
+    <input id="dispatchDate" type="date">
 
-<hr>
+    <button onclick="addDispatch()">記錄派工</button>
+    <button onclick="showDispatch()">查看派工</button>
 
-<div id="result"></div>
-<div id="dispatchResult"></div>
+    <div id="dispatchResult"></div>
+  </div>
+
+</div>
 
 <script src="script.js"></script>
-
 </body>
-</html> 
+</html>
