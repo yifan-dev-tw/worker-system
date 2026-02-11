@@ -1,1 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>人力派遣系統</title>
+</head>
+<body>
 
+<h2>工人資料登記</h2>
+
+姓名：
+<input id="name"><br><br>
+
+電話：
+<input id="phone"><br><br>
+
+<button onclick="submitData()">送出資料</button>
+<button onclick="showWorkers()">查看工人名單</button>
+
+<hr>
+
+<h2>派工紀錄</h2>
+
+工人姓名：
+<select id="dispatchName"></select><br><br>
+
+工作地點：
+<input id="dispatchLocation"><br><br>
+
+日期：
+<input id="dispatchDate" type="date"><br><br>
+
+<button onclick="addDispatch()">記錄派工</button>
+
+<hr>
+
+<div id="result"></div>
+<div id="dispatchResult"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
