@@ -1,104 +1,96 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>物流人力管理系統</title>
+<meta charset="UTF-8">
+<title>物流人力系統</title>
 
-  <style>
+<style>
 * {
   box-sizing: border-box;
 }
 
 body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
   margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f3f5;
 }
 
-.header {
-  background: #007bff;
+/* 側邊欄 */
+.sidebar {
+  width: 200px;
+  height: 100vh;
+  background: #1f2a37;
   color: white;
-  padding: 16px;
-  text-align: center;
-  font-size: 20px;
-  font-weight: bold;
+  position: fixed;
+  padding: 20px;
 }
 
-.container {
-  max-width: 420px;
-  margin: auto;
-  padding: 16px;
+.sidebar h3 {
+  margin-top: 0;
+}
+
+.menu-item {
+  margin: 15px 0;
+  cursor: pointer;
+}
+
+/* 主內容 */
+.main {
+  margin-left: 200px;
+  padding: 20px;
 }
 
 .card {
   background: white;
-  padding: 18px;
-  margin-bottom: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-}
-
-h2 {
-  margin-top: 0;
-  margin-bottom: 14px;
-}
-
-label {
-  font-size: 14px;
-  color: #555;
-  display: block;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
 }
 
 input, select {
   width: 100%;
   padding: 10px;
-  margin-top: 6px;
-  margin-bottom: 14px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  background: #fafafa;
-}
-
-.button-row {
-  display: flex;
-  gap: 10px;
+  margin: 8px 0 14px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
 button {
-  flex: 1;
-  background: #007bff;
+  background: #2563eb;
   color: white;
   border: none;
-  padding: 11px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-right: 10px;
 }
 
-button:active {
-  transform: scale(0.98);
+h2 {
+  margin-top: 0;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">物流人力管理系統</div>
+<div class="sidebar">
+  <h3>物流派遣</h3>
+  <div class="menu-item">員工管理</div>
+  <div class="menu-item">派工紀錄</div>
+</div>
 
-<div class="container">
+<div class="main">
 
   <div class="card">
-    <h2>工人資料登記</h2>
+    <h2>員工資料登記</h2>
 
-    <label>姓名</label>
+    姓名
     <input id="name">
 
-    <label>電話</label>
+    電話
     <input id="phone">
 
-    <div class="button-row">
-      <button onclick="submitData()">新增工人</button>
-      <button onclick="showWorkers()">查看名單</button>
-    </div>
+    <button onclick="submitData()">新增員工</button>
+    <button onclick="showWorkers()">查看名單</button>
 
     <div id="result"></div>
   </div>
@@ -106,19 +98,17 @@ button:active {
   <div class="card">
     <h2>派工紀錄</h2>
 
-    <label>工人</label>
+    工人
     <select id="dispatchName"></select>
 
-    <label>工作地點</label>
+    工作地點
     <input id="dispatchLocation">
 
-    <label>日期</label>
+    日期
     <input id="dispatchDate" type="date">
 
-    <div class="button-row">
-      <button onclick="addDispatch()">記錄派工</button>
-      <button onclick="showDispatch()">查看派工</button>
-    </div>
+    <button onclick="addDispatch()">記錄派工</button>
+    <button onclick="showDispatch()">查看派工</button>
 
     <div id="dispatchResult"></div>
   </div>
