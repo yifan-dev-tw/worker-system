@@ -21,13 +21,28 @@ function submitData()
 function showWorkers() {
   let workers = JSON.parse(localStorage.getItem("workers")) || [];
 
-  let text = "<h3>工人名單</h3>";
+  let html = `
+    <table border="1" width="100%" style="border-collapse: collapse;">
+      <tr>
+        <th>姓名</th>
+        <th>電話</th>
+        <th>評分</th>
+      </tr>
+  `;
 
   workers.forEach(function(w) {
-    text += w.name + " / 分數：" + (w.score || 0) + "<br>";
-  });
+    html += `
+      <tr>
+        <td>${w.name}</td>
+        <td>${w.phone}</td>
+        <td>${w.score || 0}</td>
+      </tr>
+    `;
+   });
 
-  document.getElementById("result").innerHTML = text;
+    html += "</table>";
+
+    document.getElementById("workerList").innerHTML = html;
 }
 
 function addDispatch() {
@@ -74,16 +89,32 @@ function renderWorkers() {
   });
 
   document.getElementById("workerList").innerHTML = html;
+}html;
 }
 
 function renderDispatch() {
-  let list = JSON.parse(localStorage.getItem("dispatch")) || [];
+  let dispatchList = JSON.parse(localStorage.getItem("dispatch")) || [];
 
-  let html = "";
+  let html = `
+    <table border="1" width="100%" style="border-collapse: collapse;">
+      <tr>
+        <th>員工</th>
+        <th>地點</th>
+        <th>日期</th>
+      </tr>
+  `;
 
-  list.forEach(function(d) {
-    html += "<div>" + d.name + " - " + d.location + " - " + d.date + "</div>";
+  dispatchList.forEach(function(d) {
+    html += `
+      <tr>
+        <td>${d.name}</td>
+        <td>${d.location}</td>
+        <td>${d.date}</td>
+      </tr>
+    `;
   });
+
+  html += "</table>";
 
   document.getElementById("dispatchList").innerHTML = html;
 }
