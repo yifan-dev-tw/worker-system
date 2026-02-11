@@ -80,7 +80,12 @@ h2 {
 </head>
 
 <body>
-
+<script>
+if (localStorage.getItem("loggedIn") !== "yes") {
+  window.location.href = "login.html";
+}
+</script>
+  
 <div class="sidebar">
   <h3>物流派遣</h3>
   <div class="menu-item">員工管理</div>
