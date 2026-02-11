@@ -1,4 +1,4 @@
-function submitData() {
+function submitData() 
   const name = document.getElementById("name").value;
   const phone = document.getElementById("phone").value;
 
@@ -13,6 +13,7 @@ function submitData() {
   localStorage.setItem("workers", JSON.stringify(workers));
 
   loadWorkerOptions();
+  renderWorkers();
 
   document.getElementById("result").innerHTML = "資料已儲存！";
 }
@@ -43,7 +44,7 @@ function addDispatch() {
   let dispatchList = JSON.parse(localStorage.getItem("dispatch")) || [];
   dispatchList.push(record);
   localStorage.setItem("dispatch", JSON.stringify(dispatchList));
-
+  renderDispatch();
   document.getElementById("dispatchResult").innerHTML = "派工已記錄！";
 }
 
@@ -63,6 +64,33 @@ function loadWorkerOptions() {
   });
 }
 
+function renderWorkers() {
+  let workers = JSON.parse(localStorage.getItem("workers")) || [];
+
+  let html = "";
+
+  workers.forEach(function(w) {
+    html += "<div>" + w.name + " / " + w.phone + "</div>";
+  });
+
+  document.getElementById("workerList").innerHTML = html;
+}
+
+function renderDispatch() {
+  let list = JSON.parse(localStorage.getItem("dispatch")) || [];
+
+  let html = "";
+
+  list.forEach(function(d) {
+    html += "<div>" + d.name + " - " + d.location + " - " + d.date + "</div>";
+  });
+
+  document.getElementById("dispatchList").innerHTML = html;
+}
+
 window.onload = function() {
   loadWorkerOptions();
+  renderWorkers();
+  renderDispatch();
+};
 };
