@@ -1,6 +1,9 @@
-function submitData() 
+// 新增員工
+function submitData() {
   const name = document.getElementById("name").value;
   const phone = document.getElementById("phone").value;
+
+  if (!name || !phone) return;
 
   const worker = {
     name: name,
@@ -12,62 +15,70 @@ function submitData()
   workers.push(worker);
   localStorage.setItem("workers", JSON.stringify(workers));
 
-  loadWorkerOptions();
   renderWorkers();
-
-  document.getElementById("result").innerHTML = "資料已儲存！";
+  loadWorkerOptions();
 }
 
-function showWorkers() {
+// 員工列表
+function renderWorkers() {
   let workers = JSON.parse(localStorage.getItem("workers")) || [];
 
   let html = `
-    <table border="1" width="100%" style="border-collapse: collapse;">
+    <table>
       <tr>
         <th>姓名</th>
         <th>電話</th>
         <th>評分</th>
+        <th>操作</th>
       </tr>
   `;
 
-  workers.forEach(function(w) {
+  workers.forEach(function(w, index) {
     html += `
       <tr>
         <td>${w.name}</td>
         <td>${w.phone}</td>
-        <td>${w.score || 0}</td>
+        <td>${w.score}</td>
+        <td>
+          <button onclick="updateScore(${index}, 20)">首次完成</button>
+          <button onclick="updateScore(${index}, 2)">完成</button>
+          <button onclick="updateScore(${index}, 0.5)">準時</button>
+          <button onclick="updateScore(${index}, 1)">8小時</button>
+          <button onclick="updateScore(${index}, 3)">連3天</button>
+          <br>
+          <button onclick="updateScore(${index}, -3)">遲到</button>
+          <button onclick="updateScore(${index}, -2)">早退</button>
+          <button onclick="updateScore(${index}, -10)">未到</button>
+        </td>
       </tr>
     `;
-   });
+  });
 
-    html += "</table>";
+  html += "</table>";
 
-    document.getElementById("workerList").innerHTML = html;
+  document.getElementById("workerList").innerHTML = html;
 }
 
-function addDispatch() {
-  const name = document.getElementById("dispatchName").value;
-  const location = document.getElementById("dispatchLocation").value;
-  const date = document.getElementById("dispatchDate").value;
+// 評分更新
+function updateScore(index, change) {
+  let workers = JSON.parse(localStorage.getItem("workers")) || [];
 
-  const record = {
-    name: name,
-    location: location,
-    date: date
-  };
+  let score = workers[index].score || 0;
+  score += change;
 
-  let dispatchList = JSON.parse(localStorage.getItem("dispatch")) || [];
-  dispatchList.push(record);
-  localStorage.setItem("dispatch", JSON.stringify(dispatchList));
-  renderDispatch();
-  document.getElementById("dispatchResult").innerHTML = "派工已記錄！";
+  if (score > 100) score = 100;
+  if (score < 0) score = 0;
+
+  workers[index].score = score;
+
+  localStorage.setItem("workers", JSON.stringify(workers));
+  renderWorkers();
 }
 
+// 下拉選單
 function loadWorkerOptions() {
   let workers = JSON.parse(localStorage.getItem("workers")) || [];
   let select = document.getElementById("dispatchName");
-
-  if (!select) return;
 
   select.innerHTML = "";
 
@@ -79,24 +90,27 @@ function loadWorkerOptions() {
   });
 }
 
-function renderWorkers() {
-  let workers = JSON.parse(localStorage.getItem("workers")) || [];
+// 派工
+function addDispatch() {
+  const name = document.getElementById("dispatchName").value;
+  const location = document.getElementById("dispatchLocation").value;
+  const date = document.getElementById("dispatchDate").value;
 
-  let html = "";
+  const record = { name, location, date };
 
-  workers.forEach(function(w) {
-    html += "<div>" + w.name + " / " + w.phone + "</div>";
-  });
+  let dispatchList = JSON.parse(localStorage.getItem("dispatch")) || [];
+  dispatchList.push(record);
+  localStorage.setItem("dispatch", JSON.stringify(dispatchList));
 
-  document.getElementById("workerList").innerHTML = html;
-}html;
+  renderDispatch();
 }
 
+// 派工列表
 function renderDispatch() {
-  let dispatchList = JSON.parse(localStorage.getItem("dispatch")) || [];
+  let list = JSON.parse(localStorage.getItem("dispatch")) || [];
 
   let html = `
-    <table border="1" width="100%" style="border-collapse: collapse;">
+    <table>
       <tr>
         <th>員工</th>
         <th>地點</th>
@@ -104,7 +118,7 @@ function renderDispatch() {
       </tr>
   `;
 
-  dispatchList.forEach(function(d) {
+  list.forEach(function(d) {
     html += `
       <tr>
         <td>${d.name}</td>
@@ -119,9 +133,9 @@ function renderDispatch() {
   document.getElementById("dispatchList").innerHTML = html;
 }
 
+// 初始化
 window.onload = function() {
-  loadWorkerOptions();
   renderWorkers();
   renderDispatch();
-};
+  loadWorkerOptions();
 };
