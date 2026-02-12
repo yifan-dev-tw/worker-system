@@ -15,14 +15,21 @@ window.submitData = async function () {
     return;
   }
 
-  await addDoc(collection(db, "workers"), {
-    name,
-    phone,
-    score: 0
-  });
+  try {
+    await addDoc(collection(db, "workers"), {
+      name,
+      phone,
+      score: 0
+    });
 
-  alert("新增成功");
-  loadWorkers();
+    alert("新增成功");
+
+  } catch (e) {
+    console.error(e);
+    alert("新增失敗");
+  }
+
+  loadWorkers(); // 放在 try/catch 外面
 };
 
 /* 讀取員工 */
@@ -37,7 +44,7 @@ async function loadWorkers() {
   html += "</ul>";
 
   document.getElementById("workerList").innerHTML = html;
-}   // ← 這一行是關鍵（你原本少了）
+}
 
 /* 新增派工 */
 window.addDispatch = async function () {
@@ -50,13 +57,20 @@ window.addDispatch = async function () {
     return;
   }
 
-  await addDoc(collection(db, "dispatch"), {
-    name,
-    location,
-    date
-  });
+  try {
+    await addDoc(collection(db, "dispatch"), {
+      name,
+      location,
+      date
+    });
 
-  alert("派工新增成功");
+    alert("派工新增成功");
+
+  } catch (e) {
+    console.error(e);
+    alert("派工新增失敗");
+  }
+
   loadDispatch();
 };
 
