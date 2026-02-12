@@ -1,124 +1,48 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>物流人力系統</title>
+import { db } from "./firebase.js";
+import {
+  collection,
+  addDoc,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-<style>
-* { box-sizing: border-box; }
+/* 新增員工 */
+window.submitData = async function () {
+  const name = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
 
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f1f3f5;
+  if (!name || !phone) {
+    alert("請輸入姓名與電話");
+    return;
+  }
+
+  try {
+    await addDoc(collection(db, "workers"), {
+      name: name,
+      phone: phone,
+      score: 0
+    });
+
+    alert("新增成功");
+    loadWorkers();
+
+  } catch (e) {
+    console.error(e);
+    alert("新增失敗");
+  }
+};
+
+/* 讀取員工 */
+async function loadWorkers() {
+  const querySnapshot = await getDocs(collection(db, "workers"));
+
+  let html = "<ul>";
+  querySnapshot.forEach((doc) => {
+    const w = doc.data();
+    html += `<li>${w.name} - ${w.phone} - ${w.score}</li>`;
+  });
+  html += "</ul>";
+
+  document.getElementById("workerList").innerHTML = html;
 }
 
-.sidebar {
-  width: 200px;
-  height: 100vh;
-  background: #1f2a37;
-  color: white;
-  position: fixed;
-  padding: 20px;
-}
-
-.main {
-  margin-left: 200px;
-  padding: 20px;
-}
-
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-}
-
-input, select {
-  width: 100%;
-  padding: 10px;
-  margin: 8px 0 14px 0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-button {
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 8px 10px;
-  border-radius: 6px;
-  margin: 2px;
-  cursor: pointer;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  border: 1px solid #ddd;
-  padding: 6px;
-  text-align: center;
-}
-</style>
-</head>
-
-<body>
-
-<script>
-if (localStorage.getItem("loggedIn") !== "yes") {
-  window.location.href = "login.html";
-}
-</script>
-
-<div class="sidebar">
-  <h3>物流派遣</h3>
-</div>
-
-<div class="main">
-
-  <div class="card">
-    <h2>員工資料登記</h2>
-
-    <label>姓名</label>
-    <input id="name">
-
-    <label>電話</label>
-    <input id="phone">
-
-    <button onclick="submitData()">新增員工</button>
-  </div>
-
-  <div class="card">
-    <h2>員工列表</h2>
-    <div id="workerList"></div>
-  </div>
-
-  <div class="card">
-    <h2>派工紀錄</h2>
-
-    <label>員工</label>
-    <select id="dispatchName"></select>
-
-    <label>工作地點</label>
-    <input id="dispatchLocation">
-
-    <label>日期</label>
-    <input id="dispatchDate">
-
-    <button onclick="addDispatch()">記錄派工</button>
-  </div>
-
-  <div class="card">
-    <h2>派工列表</h2>
-    <div id="dispatchList"></div>
-  </div>
-
-</div>
-
-<script type="module" src="script.js"></script>
-
-</body>
-</html>
+window.onload = loadWorkers;
