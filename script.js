@@ -7,8 +7,8 @@ import {
 
 /* ========= 新增員工 ========= */
 window.submitData = async function () {
-  const name = document.getElementById("name").value;
-  const phone = document.getElementById("phone").value;
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
 
   if (!name || !phone) {
     alert("請輸入姓名與電話");
@@ -24,8 +24,11 @@ window.submitData = async function () {
 
     alert("員工新增成功");
 
-    loadWorkers();
-    loadWorkerOptions();
+    document.getElementById("name").value = "";
+    document.getElementById("phone").value = "";
+
+    await loadWorkers();
+    await loadWorkerOptions();
 
   } catch (e) {
     console.error(e);
@@ -48,17 +51,18 @@ async function loadWorkers() {
 
   querySnapshot.forEach((doc) => {
     const w = doc.data();
+    if (!w.name) return;
+
     html += `
       <tr>
         <td>${w.name}</td>
-        <td>${w.phone}</td>
+        <td>${w.phone || "-"}</td>
         <td>${w.score ?? 0}</td>
       </tr>
     `;
   });
 
   html += "</table>";
-
   document.getElementById("workerList").innerHTML = html;
 }
 
@@ -67,10 +71,12 @@ async function loadWorkerOptions() {
   const querySnapshot = await getDocs(collection(db, "workers"));
   const select = document.getElementById("dispatchName");
 
-  select.innerHTML = "";
+  select.innerHTML = "<option value=''>請選擇員工</option>";
 
   querySnapshot.forEach((doc) => {
     const w = doc.data();
+    if (!w.name) return;
+
     const option = document.createElement("option");
     option.value = w.name;
     option.textContent = w.name;
@@ -81,7 +87,7 @@ async function loadWorkerOptions() {
 /* ========= 新增派工 ========= */
 window.addDispatch = async function () {
   const name = document.getElementById("dispatchName").value;
-  const location = document.getElementById("dispatchLocation").value;
+  const location = document.getElementById("dispatchLocation").value.trim();
   const date = document.getElementById("dispatchDate").value;
 
   if (!name || !location || !date) {
@@ -98,7 +104,10 @@ window.addDispatch = async function () {
 
     alert("派工新增成功");
 
-    loadDispatch();
+    document.getElementById("dispatchLocation").value = "";
+    document.getElementById("dispatchDate").value = "";
+
+    await loadDispatch();
 
   } catch (e) {
     console.error(e);
@@ -121,23 +130,23 @@ async function loadDispatch() {
 
   querySnapshot.forEach((doc) => {
     const d = doc.data();
+
     html += `
       <tr>
-        <td>${d.name}</td>
-        <td>${d.location}</td>
-        <td>${d.date}</td>
+        <td>${d.name || "-"}</td>
+        <td>${d.location || "-"}</td>
+        <td>${d.date || "-"}</td>
       </tr>
     `;
   });
 
   html += "</table>";
-
   document.getElementById("dispatchList").innerHTML = html;
 }
 
 /* ========= 初始化 ========= */
-window.onload = function () {
-  loadWorkers();
-  loadWorkerOptions();
-  loadDispatch();
+window.onload = async function () {
+  await loadWorkers();
+  await loadWorkerOptions();
+  await loadDispatch();
 };
