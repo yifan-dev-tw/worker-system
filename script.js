@@ -1,3 +1,11 @@
+import { db } from "./firebase.js";
+
+import {
+  collection,
+  addDoc,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs } 
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -19,11 +27,19 @@ async function submitData() {
   const name = document.getElementById("name").value;
   const phone = document.getElementById("phone").value;
 
+  if (!name || !phone) {
+    alert("請填寫姓名與電話");
+    return;
+  }
+
   await addDoc(collection(db, "workers"), {
     name: name,
     phone: phone,
     score: 0
   });
+
+  document.getElementById("name").value = "";
+  document.getElementById("phone").value = "";
 
   loadWorkers();
 }
@@ -202,6 +218,7 @@ async function loadWorkers() {
 
   querySnapshot.forEach((doc) => {
     const w = doc.data();
+
     html += `
       <tr>
         <td>${w.name}</td>
