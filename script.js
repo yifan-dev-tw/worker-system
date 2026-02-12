@@ -42,10 +42,7 @@ async function loadWorkers() {
   });
   html += "</ul>";
 
-  document.getElementById("workerList").innerHTML = html;
-}
-
-window.onload = loadWorkers;
+ document.getElementById("workerList").innerHTML = html;
 
 /* 新增派工 */
 window.addDispatch = async function () {
@@ -74,7 +71,6 @@ window.addDispatch = async function () {
   }
 };
 
-
 /* 讀取派工 */
 async function loadDispatch() {
   const querySnapshot = await getDocs(collection(db, "dispatch"));
@@ -90,3 +86,8 @@ async function loadDispatch() {
 
   document.getElementById("dispatchList").innerHTML = html;
 }
+
+window.onload = function() {
+  loadWorkers();
+  loadDispatch();
+};  
