@@ -9,7 +9,7 @@ import {
 
 /* 新增員工 */
 window.submitData = async function () {
-  alert("按鈕有連到"); // 測試用
+  alert("按鈕有連到");
 
   const name = document.getElementById("name").value;
   const phone = document.getElementById("phone").value;
@@ -21,8 +21,8 @@ window.submitData = async function () {
 
   try {
     await addDoc(collection(db, "workers"), {
-      name: name,
-      phone: phone,
+      name,
+      phone,
       score: 0
     });
 
@@ -46,7 +46,8 @@ async function loadWorkers() {
   });
   html += "</ul>";
 
- document.getElementById("workerList").innerHTML = html;
+  document.getElementById("workerList").innerHTML = html;
+}
 
 /* 新增派工 */
 window.addDispatch = async function () {
@@ -80,18 +81,16 @@ async function loadDispatch() {
   const querySnapshot = await getDocs(collection(db, "dispatch"));
 
   let html = "<ul>";
-
   querySnapshot.forEach((doc) => {
     const d = doc.data();
     html += `<li>${d.name} - ${d.location} - ${d.date}</li>`;
   });
-
   html += "</ul>";
 
   document.getElementById("dispatchList").innerHTML = html;
 }
 
-window.onload = function() {
+window.onload = function () {
   loadWorkers();
   loadDispatch();
-};  
+};
