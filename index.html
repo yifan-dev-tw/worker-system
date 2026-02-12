@@ -2,29 +2,13 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>物流人力系統</title>
+<title>物流派遣系統</title>
 
 <style>
-* { box-sizing: border-box; }
-
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f1f3f5;
-}
-
-.sidebar {
-  width: 200px;
-  height: 100vh;
-  background: #1f2a37;
-  color: white;
-  position: fixed;
-  padding: 20px;
-}
-
-.main {
-  margin-left: 200px;
-  padding: 20px;
+  font-family: Arial;
+  background: #f3f4f6;
+  padding: 30px;
 }
 
 .card {
@@ -36,20 +20,17 @@ body {
 
 input, select {
   width: 100%;
-  padding: 10px;
-  margin: 8px 0 14px 0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  padding: 8px;
+  margin: 6px 0;
 }
 
 button {
   background: #2563eb;
   color: white;
   border: none;
-  padding: 8px 10px;
+  padding: 6px 10px;
   border-radius: 6px;
   margin: 2px;
-  cursor: pointer;
 }
 
 table {
@@ -59,92 +40,52 @@ table {
 
 th, td {
   border: 1px solid #ddd;
-  padding: 6px;
+  padding: 8px;
   text-align: center;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-th {
-  background: #f1f5f9;
-  text-align: left;
-  padding: 10px;
-}
-
-td {
-  padding: 10px;
-  border-top: 1px solid #e5e7eb;
-}
-
-tr:hover {
-  background: #f9fafb;
-}
-
-button {
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
 }
 </style>
 </head>
 
 <body>
 
-<script>
-if (localStorage.getItem("loggedIn") !== "yes") {
-  window.location.href = "login.html";
-}
-</script>
+<h1>物流人力派遣系統</h1>
 
-<div class="sidebar">
-  <h3>物流派遣</h3>
+<div class="card">
+<h3>新增員工</h3>
+<input id="name" placeholder="姓名">
+<input id="phone" placeholder="電話">
+<button onclick="submitData()">新增員工</button>
 </div>
 
-<div class="main">
+<div class="card">
+<h3>員工列表</h3>
+<div id="workerList"></div>
+</div>
 
-  <div class="card">
-    <h2>員工資料登記</h2>
+<div class="card">
+<h3>新增派工</h3>
+<select id="dispatchName"></select>
+<input id="dispatchLocation" placeholder="工作地點">
+<input id="dispatchDate" placeholder="YYYY-MM-DD">
 
-    <label>姓名</label>
-    <input id="name">
+<select id="dispatchStatus">
+<option>完成</option>
+<option>準時</option>
+<option>遲到</option>
+<option>未到</option>
+<option>請假</option>
+<option>取消</option>
+</select>
 
-    <label>電話</label>
-    <input id="phone">
+<button onclick="addDispatch()">新增派工</button>
+</div>
 
-    <button onclick="submitData()">新增員工</button>
-  </div>
+<div class="card">
+<h3>派工列表</h3>
+<div id="dispatchList"></div>
+</div>
 
-  <div class="card">
-    <h2>員工列表</h2>
-    <div id="workerList"></div>
-  </div>
-
-  <div class="card">
-    <h2>派工紀錄</h2>
-
-    <label>員工</label>
-    <select id="dispatchName"></select>
-
-    <label>工作地點</label>
-    <input id="dispatchLocation">
-
-    <label>日期</label>
-    <input id="dispatchDate" placeholder="YYYY-MM-DD">
-
-    <button onclick="addDispatch()">記錄派工</button>
-  </div>
-
-  <div class="card">
-    <h2>派工列表</h2>
-    <div id="dispatchList"></div>
-  </div>
-  
+<script type="module" src="./firebase.js"></script>
 <script type="module" src="./script.js"></script>
 
 </body>
