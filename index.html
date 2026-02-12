@@ -5,9 +5,7 @@
 <title>物流人力系統</title>
 
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -15,7 +13,6 @@ body {
   background: #f1f3f5;
 }
 
-/* 側邊欄 */
 .sidebar {
   width: 200px;
   height: 100vh;
@@ -25,16 +22,6 @@ body {
   padding: 20px;
 }
 
-.sidebar h3 {
-  margin-top: 0;
-}
-
-.menu-item {
-  margin: 15px 0;
-  cursor: pointer;
-}
-
-/* 主內容 */
 .main {
   margin-left: 200px;
   padding: 20px;
@@ -55,46 +42,44 @@ input, select {
   border: 1px solid #ccc;
 }
 
-input[type="date"] {
-  width: 100%;
-}
-  
-input[type="date"] {
-  width: 100%;
-  display: block;
-}
-  
 button {
   background: #2563eb;
   color: white;
   border: none;
-  padding: 10px 14px;
+  padding: 8px 10px;
   border-radius: 6px;
-  margin-right: 10px;
+  margin: 2px;
+  cursor: pointer;
 }
 
-h2 {
-  margin-top: 0;
+table {
+  width: 100%;
+  border-collapse: collapse;
 }
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 6px;
+  text-align: center;
+}
+
 </style>
 </head>
 
 <body>
+
 <script>
 if (localStorage.getItem("loggedIn") !== "yes") {
   window.location.href = "login.html";
 }
 </script>
-  
+
 <div class="sidebar">
   <h3>物流派遣</h3>
-  <div class="menu-item">員工管理</div>
-  <div class="menu-item">派工紀錄</div>
 </div>
 
 <div class="main">
 
-  <!-- 員工資料登記 -->
   <div class="card">
     <h2>員工資料登記</h2>
 
@@ -105,16 +90,13 @@ if (localStorage.getItem("loggedIn") !== "yes") {
     <input id="phone">
 
     <button onclick="submitData()">新增員工</button>
-    <button onclick="showWorkers()">查看名單</button>
   </div>
 
-  <!-- 員工列表 -->
   <div class="card">
     <h2>員工列表</h2>
     <div id="workerList"></div>
   </div>
 
-  <!-- 派工紀錄 -->
   <div class="card">
     <h2>派工紀錄</h2>
 
@@ -130,13 +112,13 @@ if (localStorage.getItem("loggedIn") !== "yes") {
     <button onclick="addDispatch()">記錄派工</button>
   </div>
 
-  <!-- 派工列表 -->
   <div class="card">
     <h2>派工列表</h2>
     <div id="dispatchList"></div>
   </div>
 
 </div>
+
 <script src="script.js"></script>
 </body>
 </html>
