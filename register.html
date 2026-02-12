@@ -3,122 +3,191 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>工作人員資料登記</title>
+<title>物流人力登記</title>
 
 <style>
 body{
   margin:0;
-  font-family:Arial;
-  background:#f5f6f8;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+  background:#f4f6f9;
 }
 
-.wrapper{
-  max-width:640px;
-  margin:40px auto;
+/* 頁首 */
+.header{
   background:white;
-  padding:24px 28px;
-  border-radius:10px;
+  border-bottom:1px solid #e5e7eb;
+  padding:16px 24px;
+  font-weight:600;
 }
 
-.form-row{
-  display:flex;
-  margin-bottom:10px;
+/* 主區塊 */
+.container{
+  max-width:760px;
+  margin:40px auto;
+  padding:0 20px;
+}
+
+/* 卡片 */
+.card{
+  background:white;
+  padding:28px;
+  border-radius:12px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.05);
+}
+
+/* 標題 */
+h1{
+  margin:0 0 8px 0;
+  font-size:22px;
+}
+
+.desc{
+  color:#6b7280;
+  margin-bottom:24px;
+  font-size:14px;
+}
+
+/* 表單 */
+.form-group{
+  margin-bottom:16px;
 }
 
 label{
-  width:120px;
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:6px;
 }
 
 input,select{
-  flex:1;
-  padding:6px;
-}
-
-button{
-  margin-top:15px;
   width:100%;
   padding:10px;
+  border-radius:8px;
+  border:1px solid #d1d5db;
+  font-size:14px;
+  transition:0.2s;
+}
+
+input:focus,select:focus{
+  outline:none;
+  border-color:#2563eb;
+  box-shadow:0 0 0 2px rgba(37,99,235,0.1);
+}
+
+/* 按鈕 */
+button{
+  margin-top:12px;
+  width:100%;
+  padding:12px;
   background:#2563eb;
-  color:white;
   border:none;
+  color:white;
+  border-radius:8px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#1e40af;
+}
+
+.footer{
+  margin-top:14px;
+  font-size:12px;
+  color:#6b7280;
+  text-align:center;
 }
 </style>
 </head>
 
 <body>
 
-<div class="wrapper">
+<div class="header">
+物流人力媒合平台
+</div>
 
-<h2>工作人員資料登記</h2>
+<div class="container">
+<div class="card">
 
-<div class="form-row">
+<h1>工作人員資料登記</h1>
+<div class="desc">
+填寫資料加入物流派遣人力資料庫，審核後將安排工作機會。
+</div>
+
+<div class="form-group">
 <label>姓名</label>
 <input id="name">
 </div>
 
-<div class="form-row">
-<label>電話</label>
+<div class="form-group">
+<label>聯絡電話</label>
 <input id="phone">
 </div>
 
-<div class="form-row">
-<label>LINE</label>
+<div class="form-group">
+<label>LINE ID</label>
 <input id="line">
 </div>
 
-<div class="form-row">
+<div class="form-group">
 <label>物流經驗</label>
 <select id="experience">
-<option>無</option>
-<option>有</option>
+<option value="無">無經驗</option>
+<option value="有">有經驗</option>
 </select>
+</div>
+
+<div class="form-group">
+<label>可工作地區</label>
+<input id="area">
+</div>
+
+<div class="form-group">
+<label>可工作時段</label>
+<input id="time">
 </div>
 
 <button onclick="submitRegister()">提交申請</button>
 
+<div class="footer">
+本平台僅用於物流派遣媒合作業，資料依個資法規定使用。
 </div>
 
-<!-- Firebase -->
+</div>
+</div>
+
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  addDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyC-ajaVChBSIK7uXIgcv5JTlxDjuxLWHDA",
-  authDomain: "worker-system.firebaseapp.com",
-  projectId: "worker-system",
-  storageBucket: "worker-system.firebasestorage.app",
-  messagingSenderId: "249724369179",
-  appId: "1:249724369179:web:9d14d30c499aec379dbbbe"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+import { db } from "./firebase.js";
+import { collection, addDoc } from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 window.submitRegister = async function(){
-  const name = document.getElementById("name").value;
-  const phone = document.getElementById("phone").value;
-  const line = document.getElementById("line").value;
-  const experience = document.getElementById("experience").value;
 
-  if(!name || !phone){
-    alert("請填寫姓名與電話");
-    return;
-  }
+const name = document.getElementById("name").value;
+const phone = document.getElementById("phone").value;
+const line = document.getElementById("line").value;
+const experience = document.getElementById("experience").value;
+const area = document.getElementById("area").value;
+const time = document.getElementById("time").value;
 
-  await addDoc(collection(db,"workers"),{
-    name,
-    phone,
-    line,
-    experience,
-    score:0
-  });
+if(!name || !phone){
+alert("請填寫姓名與電話");
+return;
+}
 
-  alert("申請已送出");
+await addDoc(collection(db,"workers"),{
+name,
+phone,
+line,
+experience,
+area,
+time,
+score:0,
+source:"register"
+});
+
+alert("申請已送出");
 };
 </script>
 
