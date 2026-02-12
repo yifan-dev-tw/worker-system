@@ -1,163 +1,124 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>物流人力媒合平台｜人員註冊</title>
+<title>工作人員資料登記</title>
 
 <style>
 body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
-  background:#f5f7fb;
-  color:#1f2937;
-}
-
-.header{
-  background:white;
-  border-bottom:1px solid #e5e7eb;
-  padding:18px 24px;
-  font-weight:600;
-  font-size:18px;
+font-family:Arial;
+background:#f3f4f6;
+margin:0;
 }
 
 .container{
-  max-width:700px;
-  margin:40px auto;
-  padding:20px;
-}
-
-.card{
-  background:white;
-  border-radius:14px;
-  padding:30px;
-  box-shadow:0 8px 30px rgba(0,0,0,0.06);
+max-width:520px;
+margin:40px auto;
+background:white;
+padding:28px;
+border-radius:12px;
+box-shadow:0 6px 18px rgba(0,0,0,.08);
 }
 
 h2{
-  margin-top:0;
-  margin-bottom:10px;
+margin-top:0;
 }
 
-.desc{
-  color:#6b7280;
-  margin-bottom:25px;
+.section{
+margin-bottom:20px;
+font-weight:bold;
+color:#333;
 }
 
-label{
-  font-size:14px;
-  font-weight:600;
-}
-
-input{
-  width:100%;
-  padding:12px;
-  margin:6px 0 16px 0;
-  border-radius:8px;
-  border:1px solid #d1d5db;
-  font-size:15px;
+input,select{
+width:100%;
+padding:12px;
+margin-top:6px;
+margin-bottom:14px;
+border-radius:8px;
+border:1px solid #ccc;
 }
 
 button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:10px;
-  background:#2563eb;
-  color:white;
-  font-size:16px;
-  cursor:pointer;
+width:100%;
+background:#2563eb;
+color:white;
+border:none;
+padding:14px;
+border-radius:10px;
+font-size:16px;
+cursor:pointer;
 }
 
-button:hover{
-  background:#1d4ed8;
-}
-
-.notice{
-  margin-top:20px;
-  font-size:13px;
-  color:#6b7280;
-  line-height:1.6;
-}
-
-.success{
-  text-align:center;
-  color:#16a34a;
-  margin-top:15px;
-  font-weight:600;
+.note{
+font-size:13px;
+color:#666;
+margin-top:12px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-物流人力媒合平台
-</div>
-
 <div class="container">
-  <div class="card">
-    <h2>工作人員資料登記</h2>
-    <div class="desc">
-      請填寫基本資料以加入物流派遣人力資料庫。
-      經審核後將可安排工作機會。
-    </div>
+<h2>工作人員資料登記</h2>
+<p>請填寫資料加入物流派遣人力資料庫，審核後將安排工作機會。</p>
 
-    <label>姓名</label>
-    <input id="name" placeholder="請輸入姓名">
+<div class="section">基本資料</div>
 
-    <label>聯絡電話</label>
-    <input id="phone" placeholder="例如：0900000000">
+<input id="name" placeholder="姓名">
+<input id="phone" placeholder="聯絡電話">
+<input id="line" placeholder="LINE ID">
+<input id="city" placeholder="居住地區">
 
-    <button onclick="register()">提交申請</button>
+<div class="section">工作資料</div>
 
-    <div id="msg" class="success"></div>
+<select id="experience">
+<option value="">是否有物流經驗</option>
+<option>無經驗</option>
+<option>搬運經驗</option>
+<option>倉儲經驗</option>
+<option>裝卸貨經驗</option>
+</select>
 
-    <div class="notice">
-      本平台僅用於物流派遣媒合作業。<br>
-      所有資料依個人資料保護法規定使用與保存，不會提供給第三方。
-    </div>
-  </div>
+<input id="area" placeholder="可支援工作地區">
+<input id="time" placeholder="可工作時段 (例：白天 / 晚班)">
+
+<div class="section">驗證資料</div>
+
+<input id="id4" placeholder="身分證後四碼">
+<input id="emergency" placeholder="緊急聯絡人">
+<input id="emergencyPhone" placeholder="緊急聯絡電話">
+
+<button onclick="submitRegister()">提交申請</button>
+
+<div class="note">
+本平台僅用於物流人力派遣媒合作業，資料依個資法規定使用。
+</div>
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  addDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { db } from "./firebase.js";
+import { collection, addDoc } from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyC-ajaVChBSIK7uXIgcv5JTlxDjuxLWHDA",
-  authDomain: "worker-system.firebaseapp.com",
-  projectId: "worker-system",
-  storageBucket: "worker-system.firebasestorage.app",
-  messagingSenderId: "249724369179",
-  appId: "1:249724369179:web:9d14d30c499aec379dbbbe"
-};
+window.submitRegister = async function(){
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+await addDoc(collection(db,"workers"),{
+name:document.getElementById("name").value,
+phone:document.getElementById("phone").value,
+line:document.getElementById("line").value,
+city:document.getElementById("city").value,
+experience:document.getElementById("experience").value,
+area:document.getElementById("area").value,
+time:document.getElementById("time").value,
+id4:document.getElementById("id4").value,
+emergency:document.getElementById("emergency").value,
+emergencyPhone:document.getElementById("emergencyPhone").value,
+score:0
+});
 
-window.register = async function(){
-  const name = document.getElementById("name").value;
-  const phone = document.getElementById("phone").value;
-
-  if(!name || !phone){
-    alert("請填寫完整資料");
-    return;
-  }
-
-  await addDoc(collection(db,"workers"),{
-    name,
-    phone,
-    score:0,
-    createdAt:new Date(),
-    status:"pending"
-  });
-
-  document.getElementById("msg").innerText = "資料已送出，我們會與您聯絡";
+alert("申請已送出");
 };
 </script>
 
