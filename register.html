@@ -1,54 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<title>加入人力媒合平台</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>物流人力媒合平台｜人員註冊</title>
 
 <style>
 body{
   margin:0;
-  font-family: Arial, sans-serif;
-  background:#f3f4f6;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+  background:#f5f7fb;
+  color:#1f2937;
+}
+
+.header{
+  background:white;
+  border-bottom:1px solid #e5e7eb;
+  padding:18px 24px;
+  font-weight:600;
+  font-size:18px;
 }
 
 .container{
-  max-width:500px;
+  max-width:700px;
   margin:40px auto;
   padding:20px;
 }
 
 .card{
   background:white;
-  padding:25px;
-  border-radius:12px;
-  box-shadow:0 4px 20px rgba(0,0,0,0.08);
+  border-radius:14px;
+  padding:30px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.06);
 }
 
-h1{
-  text-align:center;
+h2{
+  margin-top:0;
   margin-bottom:10px;
 }
 
-.subtitle{
-  text-align:center;
-  color:#666;
+.desc{
+  color:#6b7280;
   margin-bottom:25px;
+}
+
+label{
+  font-size:14px;
+  font-weight:600;
 }
 
 input{
   width:100%;
   padding:12px;
-  margin-bottom:15px;
+  margin:6px 0 16px 0;
   border-radius:8px;
-  border:1px solid #ddd;
-  font-size:16px;
+  border:1px solid #d1d5db;
+  font-size:15px;
 }
 
 button{
   width:100%;
-  padding:12px;
+  padding:14px;
   border:none;
-  border-radius:8px;
+  border-radius:10px;
   background:#2563eb;
   color:white;
   font-size:16px;
@@ -59,36 +73,50 @@ button:hover{
   background:#1d4ed8;
 }
 
-.success{
-  color:green;
-  text-align:center;
-  margin-top:15px;
+.notice{
+  margin-top:20px;
+  font-size:13px;
+  color:#6b7280;
+  line-height:1.6;
 }
 
-.footer{
+.success{
   text-align:center;
-  margin-top:20px;
-  font-size:14px;
+  color:#16a34a;
+  margin-top:15px;
+  font-weight:600;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-  <h1>物流人力媒合平台</h1>
-  <div class="subtitle"加入物流派遣</div>
+<div class="header">
+物流人力媒合平台
+</div>
 
+<div class="container">
   <div class="card">
-    <input id="name" placeholder="姓名">
-    <input id="phone" placeholder="電話">
-    <button onclick="register()">送出申請</button>
+    <h2>工作人員資料登記</h2>
+    <div class="desc">
+      請填寫基本資料以加入物流派遣人力資料庫。
+      經審核後將可安排工作機會。
+    </div>
+
+    <label>姓名</label>
+    <input id="name" placeholder="請輸入姓名">
+
+    <label>聯絡電話</label>
+    <input id="phone" placeholder="例如：0900000000">
+
+    <button onclick="register()">提交申請</button>
 
     <div id="msg" class="success"></div>
-  </div>
 
-  <div class="footer">
-    提交資料即表示同意平台使用資料進行人力媒合
+    <div class="notice">
+      本平台僅用於物流派遣媒合作業。<br>
+      所有資料依個人資料保護法規定使用與保存，不會提供給第三方。
+    </div>
   </div>
 </div>
 
@@ -122,15 +150,14 @@ window.register = async function(){
   }
 
   await addDoc(collection(db,"workers"),{
-    name:name,
-    phone:phone,
+    name,
+    phone,
     score:0,
-    createdAt:new Date()
+    createdAt:new Date(),
+    status:"pending"
   });
 
-  document.getElementById("msg").innerText = "申請成功！";
-  document.getElementById("name").value="";
-  document.getElementById("phone").value="";
+  document.getElementById("msg").innerText = "資料已送出，我們會與您聯絡";
 };
 </script>
 
