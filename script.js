@@ -1,3 +1,5 @@
+alert("新版系統");
+
 import { db } from "./firebase.js";
 import {
   collection,
