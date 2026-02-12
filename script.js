@@ -1,28 +1,31 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC-ajaVChBSIK7uXIgcv5JTlxDjuxLWHDA",
+  authDomain: "worker-system.firebaseapp.com",
+  projectId: "worker-system",
+  storageBucket: "worker-system.firebasestorage.app",
+  messagingSenderId: "249724369179",
+  appId: "1:249724369179:web:9d14d30c499aec379dbbbe",
+  measurementId: "G-H4WTDJ84TG"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 async function submitData() {
-  const name = document.getElementById("name").value.trim();
-  const phone = document.getElementById("phone").value.trim();
+  const name = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
 
-  if (!name || !phone) {
-    alert("請輸入姓名與電話");
-    return;
-  }
-
-  const { collection, addDoc } = await import(
-    "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
-  );
-
-  await addDoc(collection(window.db, "workers"), {
+  await addDoc(collection(db, "workers"), {
     name: name,
     phone: phone,
     score: 0
   });
 
-  alert("新增成功");
-
-  document.getElementById("name").value = "";
-  document.getElementById("phone").value = "";
-
-  renderWorkers();
+  loadWorkers();
 }
 
 // 員工列表
@@ -183,4 +186,32 @@ function deleteDispatch(index) {
   localStorage.setItem("dispatch", JSON.stringify(list));
 
   renderDispatch();
+}
+
+async function loadWorkers() {
+  const querySnapshot = await getDocs(collection(db, "workers"));
+
+  let html = `
+    <table>
+      <tr>
+        <th>姓名</th>
+        <th>電話</th>
+        <th>評分</th>
+      </tr>
+  `;
+
+  querySnapshot.forEach((doc) => {
+    const w = doc.data();
+    html += `
+      <tr>
+        <td>${w.name}</td>
+        <td>${w.phone}</td>
+        <td>${w.score}</td>
+      </tr>
+    `;
+  });
+
+  html += "</table>";
+
+  document.getElementById("workerList").innerHTML = html;
 }
