@@ -1,16 +1,15 @@
-alert("新版系統");
-
 import { db } from "./firebase.js";
 import {
   collection,
   addDoc,
   getDocs,
   deleteDoc,
-  updateDoc,
-  doc
+  doc,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const scoreRules = {
+/* ===================== 評分規則 ===================== */
+const scoreRule = {
   完成: 2,
   準時: 1,
   遲到: -3,
@@ -19,12 +18,12 @@ const scoreRules = {
   取消: -5
 };
 
-/* 新增員工 */
+/* ===================== 新增員工 ===================== */
 window.submitData = async function () {
   const name = document.getElementById("name").value;
   const phone = document.getElementById("phone").value;
 
-  if (!name || !phone) return alert("請輸入資料");
+  if (!name || !phone) return alert("請輸入姓名與電話");
 
   await addDoc(collection(db, "workers"), {
     name,
@@ -36,61 +35,127 @@ window.submitData = async function () {
   loadWorkerOptions();
 };
 
-/* 員工列表 */
+/* ===================== 讀取員工 ===================== */
 async function loadWorkers() {
-  const snap = await getDocs(collection(db, "workers"));
+  const querySnapshot = await getDocs(collection(db, "workers"));
 
-  let html = `<table>
-<tr><th>姓名</th><th>電話</th><th>評分</th><th>操作</th></tr>`;
+  let html = `
+  <table>
+    <tr>
+      <th>姓名</th>
+      <th>電話</th>
+      <th>評分</th>
+      <th>操作</th>
+    </tr>
+  `;
 
-  snap.forEach(d => {
-    const w = d.data();
+  querySnapshot.forEach((docSnap) => {
+    const w = docSnap.data();
     html += `
-<tr>
-<td>${w.name}</td>
-<td>${w.phone}</td>
-<td>${w.score || 0}</td>
-<td>
-<button onclick="deleteWorker('${d.id}')">刪除</button>
-</td>
-</tr>`;
+    <tr>
+      <td>${w.name}</td>
+      <td>${w.phone}</td>
+      <td>${w.score}</td>
+      <td>
+        <button onclick="addScore('${docSnap.id}',2)">+2</button>
+        <button onclick="addScore('${docSnap.id}',-2)">-2</button>
+        <button onclick="deleteWorker('${docSnap.id}')">刪除</button>
+      </td>
+    </tr>
+    `;
   });
 
   html += "</table>";
-  workerList.innerHTML = html;
+  document.getElementById("workerList").innerHTML = html;
 }
 
-/* 刪除員工 */
-window.deleteWorker = async function(id){
-  await deleteDoc(doc(db,"workers",id));
+/* ===================== 手動加減分 ===================== */
+window.addScore = async function (id, value) {
+  const ref = doc(db, "workers", id);
+  const snap = await getDocs(collection(db, "workers"));
+
+  snap.forEach(async (d) => {
+    if (d.id === id) {
+      const w = d.data();
+      const newScore = (w.score || 0) + value;
+
+      await updateDoc(ref, { score: newScore });
+
+      await addDoc(collection(db, "scoreHistory"), {
+        name: w.name,
+        change: value,
+        date: new Date().toLocaleString()
+      });
+    }
+  });
+
+  loadWorkers();
+};
+
+/* ===================== 刪除員工 ===================== */
+window.deleteWorker = async function (id) {
+  await deleteDoc(doc(db, "workers", id));
   loadWorkers();
   loadWorkerOptions();
-}
+};
 
-/* 員工選單 */
+/* ===================== 員工下拉 ===================== */
 async function loadWorkerOptions() {
-  const snap = await getDocs(collection(db, "workers"));
-  const select = dispatchName;
+  const querySnapshot = await getDocs(collection(db, "workers"));
+  const select = document.getElementById("dispatchName");
+
   select.innerHTML = "";
 
-  snap.forEach(d => {
-    const w = d.data();
-    const op = document.createElement("option");
-    op.value = w.name;
-    op.textContent = w.name;
-    select.appendChild(op);
+  querySnapshot.forEach((doc) => {
+    const w = doc.data();
+    const option = document.createElement("option");
+    option.value = w.name;
+    option.textContent = w.name;
+    select.appendChild(option);
   });
 }
 
-/* 評分 */
-async function applyScore(workerName, status) {
-  const snap = await getDocs(collection(db, "workers"));
+/* ===================== 新增派工 ===================== */
+window.addDispatch = async function () {
+  const name = document.getElementById("dispatchName").value;
+  const location = document.getElementById("dispatchLocation").value;
+  const date = document.getElementById("dispatchDate").value;
+  const status = document.getElementById("dispatchStatus").value;
 
-  snap.forEach(async d => {
-    const w = d.data();
-    if (w.name === workerName) {
-      await updateDoc(doc(db,"workers",d.id),{
-        score:(w.score||0)+scoreRules[status]
+  if (!name || !location || !date) return alert("請填寫完整");
+
+  await addDoc(collection(db, "dispatch"), {
+    name,
+    location,
+    date,
+    status
+  });
+
+  /* 自動評分 */
+  const scoreChange = scoreRule[status] || 0;
+  updateWorkerScore(name, scoreChange, status);
+
+  loadDispatch();
+};
+
+/* ===================== 更新員工分數 ===================== */
+async function updateWorkerScore(name, change, reason) {
+  const querySnapshot = await getDocs(collection(db, "workers"));
+
+  querySnapshot.forEach(async (docSnap) => {
+    const w = docSnap.data();
+    if (w.name === name) {
+      const newScore = (w.score || 0) + change;
+
+      await updateDoc(doc(db, "workers", docSnap.id), {
+        score: newScore
+      });
+
+      await addDoc(collection(db, "scoreHistory"), {
+        name,
+        change,
+        reason,
+        date: new Date().toLocaleString()
       });
     }
   });
@@ -98,53 +163,48 @@ async function applyScore(workerName, status) {
   loadWorkers();
 }
 
-/* 新增派工 */
-window.addDispatch = async function () {
-  const name = dispatchName.value;
-  const location = dispatchLocation.value;
-  const date = dispatchDate.value;
-  const status = dispatchStatus.value;
+/* ===================== 讀取派工 ===================== */
+async function loadDispatch() {
+  const querySnapshot = await getDocs(collection(db, "dispatch"));
 
-  if (!name || !location || !date) return alert("請填寫完整");
+  let html = `
+  <table>
+    <tr>
+      <th>員工</th>
+      <th>地點</th>
+      <th>日期</th>
+      <th>狀態</th>
+      <th>操作</th>
+    </tr>
+  `;
 
-  await addDoc(collection(db,"dispatch"),{
-    name,location,date,status
+  querySnapshot.forEach((docSnap) => {
+    const d = docSnap.data();
+    html += `
+    <tr>
+      <td>${d.name}</td>
+      <td>${d.location}</td>
+      <td>${d.date}</td>
+      <td>${d.status}</td>
+      <td>
+        <button onclick="deleteDispatch('${docSnap.id}')">刪除</button>
+      </td>
+    </tr>
+    `;
   });
 
-  await applyScore(name,status);
+  html += "</table>";
+  document.getElementById("dispatchList").innerHTML = html;
+}
+
+/* ===================== 刪除派工 ===================== */
+window.deleteDispatch = async function (id) {
+  await deleteDoc(doc(db, "dispatch", id));
   loadDispatch();
 };
 
-/* 派工列表 */
-async function loadDispatch() {
-  const snap = await getDocs(collection(db,"dispatch"));
-
-  let html = `<table>
-<tr><th>員工</th><th>地點</th><th>日期</th><th>狀態</th><th>操作</th></tr>`;
-
-  snap.forEach(d=>{
-    const x = d.data();
-    html+=`
-<tr>
-<td>${x.name}</td>
-<td>${x.location}</td>
-<td>${x.date}</td>
-<td>${x.status}</td>
-<td><button onclick="deleteDispatch('${d.id}')">刪除</button></td>
-</tr>`;
-  });
-
-  html+="</table>";
-  dispatchList.innerHTML=html;
-}
-
-/* 刪除派工 */
-window.deleteDispatch = async function(id){
-  await deleteDoc(doc(db,"dispatch",id));
-  loadDispatch();
-}
-
-window.onload = async function () {
+/* ===================== 初始化 ===================== */
+window.onload = function () {
   loadWorkers();
   loadWorkerOptions();
   loadDispatch();
