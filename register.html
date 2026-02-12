@@ -128,13 +128,9 @@ button:hover{
 
 </div>
 
-<script type="module">
-alert("register script loaded");
-import { db } from "./firebase.js";
-import { collection, addDoc } from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-window.submitRegister = async function(){
+<script src="firebase.js"></script>
+<script>
+async function submitRegister(){
 
 const name = document.getElementById("name").value;
 const phone = document.getElementById("phone").value;
@@ -148,6 +144,9 @@ alert("請填寫姓名與電話");
 return;
 }
 
+const { collection, addDoc } =
+await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+
 await addDoc(collection(db,"workers"),{
 name,
 phone,
@@ -160,12 +159,7 @@ source:"register"
 });
 
 alert("申請已送出");
-
-document.getElementById("name").value="";
-document.getElementById("phone").value="";
-document.getElementById("line").value="";
-document.getElementById("area").value="";
-document.getElementById("time").value="";
+}
 </script>
 
 </body>
