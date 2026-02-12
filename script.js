@@ -36,17 +36,21 @@ window.submitData = async function () {
 };
 
 /* 讀取員工 */
-async function loadWorkers() {
+async function loadWorkerOptions() {
   const querySnapshot = await getDocs(collection(db, "workers"));
+  const select = document.getElementById("dispatchName");
 
-  let html = "<ul>";
+  select.innerHTML = "";
+
   querySnapshot.forEach((doc) => {
     const w = doc.data();
-    html += `<li>${w.name} - ${w.phone} - ${w.score}</li>`;
-  });
-  html += "</ul>";
 
-  document.getElementById("workerList").innerHTML = html;
+    const option = document.createElement("option");
+    option.value = w.name;
+    option.textContent = w.name;
+
+    select.appendChild(option);
+  });
 }
 
 /* 新增派工 */
