@@ -96,7 +96,18 @@ function addDispatch() {
   dispatchList.push(record);
   localStorage.setItem("dispatch", JSON.stringify(dispatchList));
 
-  renderDispatch();
+  // 完成派工自動加分
+ let workers = JSON.parse(localStorage.getItem("workers")) || [];
+
+ workers.forEach(function(w) {
+  if (w.name === name) {
+    w.score = (w.score || 0) + 2;
+  }
+});
+
+localStorage.setItem("workers", JSON.stringify(workers));
+renderWorkers();
+renderDispatch();
 }
 
 // 派工列表
