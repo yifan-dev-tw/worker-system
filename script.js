@@ -1,9 +1,12 @@
-// 新增員工
 function submitData() {
   const name = document.getElementById("name").value;
   const phone = document.getElementById("phone").value;
 
-  const worker = { name, phone };
+  const worker = {
+    name: name,
+    phone: phone,
+    score: 0
+  };
 
   let workers = JSON.parse(localStorage.getItem("workers")) || [];
   workers.push(worker);
