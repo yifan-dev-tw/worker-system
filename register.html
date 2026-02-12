@@ -8,9 +8,8 @@
 <style>
 body{
   margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+  font-family:Arial;
   background:#f5f6f8;
-  font-size:14px;
 }
 
 .wrapper{
@@ -19,61 +18,29 @@ body{
   background:white;
   padding:24px 28px;
   border-radius:10px;
-  box-shadow:0 6px 16px rgba(0,0,0,0.05);
-}
-
-h1{
-  margin-top:0;
-  font-size:20px;
-}
-
-.desc{
-  color:#6b7280;
-  margin-bottom:18px;
-  font-size:13px;
 }
 
 .form-row{
   display:flex;
-  align-items:center;
   margin-bottom:10px;
 }
 
 label{
   width:120px;
-  font-weight:600;
-  font-size:14px;
 }
 
 input,select{
   flex:1;
-  padding:7px 8px;
-  border:1px solid #d1d5db;
-  border-radius:6px;
-  font-size:14px;
+  padding:6px;
 }
 
 button{
-  margin-top:18px;
+  margin-top:15px;
   width:100%;
   padding:10px;
   background:#2563eb;
-  border:none;
   color:white;
-  border-radius:8px;
-  font-size:14px;
-  cursor:pointer;
-}
-
-button:hover{
-  background:#1d4ed8;
-}
-
-.footer{
-  margin-top:12px;
-  font-size:12px;
-  color:#6b7280;
-  text-align:center;
+  border:none;
 }
 </style>
 </head>
@@ -82,10 +49,7 @@ button:hover{
 
 <div class="wrapper">
 
-<h1>工作人員資料登記</h1>
-<div class="desc">
-填寫基本資料加入物流人力資料庫，審核後將安排工作機會。
-</div>
+<h2>工作人員資料登記</h2>
 
 <div class="form-row">
 <label>姓名</label>
@@ -93,73 +57,69 @@ button:hover{
 </div>
 
 <div class="form-row">
-<label>聯絡電話</label>
+<label>電話</label>
 <input id="phone">
 </div>
 
 <div class="form-row">
-<label>LINE ID</label>
+<label>LINE</label>
 <input id="line">
 </div>
 
 <div class="form-row">
 <label>物流經驗</label>
 <select id="experience">
-<option value="無">無經驗</option>
-<option value="有">有經驗</option>
+<option>無</option>
+<option>有</option>
 </select>
-</div>
-
-<div class="form-row">
-<label>可工作地區</label>
-<input id="area">
-</div>
-
-<div class="form-row">
-<label>可工作時段</label>
-<input id="time">
 </div>
 
 <button onclick="submitRegister()">提交申請</button>
 
-<div class="footer">
-本平台僅用於物流派遣媒合作業，資料依個資法規定使用。
 </div>
 
-</div>
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-<script src="firebase.js"></script>
-<script>
-async function submitRegister(){
+const firebaseConfig = {
+  apiKey: "AIzaSyC-ajaVChBSIK7uXIgcv5JTlxDjuxLWHDA",
+  authDomain: "worker-system.firebaseapp.com",
+  projectId: "worker-system",
+  storageBucket: "worker-system.firebasestorage.app",
+  messagingSenderId: "249724369179",
+  appId: "1:249724369179:web:9d14d30c499aec379dbbbe"
+};
 
-const name = document.getElementById("name").value;
-const phone = document.getElementById("phone").value;
-const line = document.getElementById("line").value;
-const experience = document.getElementById("experience").value;
-const area = document.getElementById("area").value;
-const time = document.getElementById("time").value;
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-if(!name || !phone){
-alert("請填寫姓名與電話");
-return;
-}
+window.submitRegister = async function(){
+  const name = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
+  const line = document.getElementById("line").value;
+  const experience = document.getElementById("experience").value;
 
-const { collection, addDoc } =
-await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+  if(!name || !phone){
+    alert("請填寫姓名與電話");
+    return;
+  }
 
-await addDoc(collection(db,"workers"),{
-name,
-phone,
-line,
-experience,
-area,
-time,
-score:0,
-source:"register"
-});
+  await addDoc(collection(db,"workers"),{
+    name,
+    phone,
+    line,
+    experience,
+    score:0
+  });
 
-alert("申請已送出");
-}
+  alert("申請已送出");
+};
 </script>
 
 </body>
