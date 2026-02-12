@@ -21,7 +21,7 @@ function renderWorkers() {
   let workers = JSON.parse(localStorage.getItem("workers")) || [];
 
   let html = `
-    <table>
+    <table border="1" style="width:100%; border-collapse:collapse;">
       <tr>
         <th>姓名</th>
         <th>電話</th>
@@ -35,17 +35,9 @@ function renderWorkers() {
       <tr>
         <td>${w.name}</td>
         <td>${w.phone}</td>
-        <td>${w.score}</td>
+        <td>${w.score ?? 0}</td>
         <td>
-          <button onclick="updateScore(${index}, 20)">首次完成</button>
-          <button onclick="updateScore(${index}, 2)">完成</button>
-          <button onclick="updateScore(${index}, 0.5)">準時</button>
-          <button onclick="updateScore(${index}, 1)">8小時</button>
-          <button onclick="updateScore(${index}, 3)">連3天</button>
-          <br>
-          <button onclick="updateScore(${index}, -3)">遲到</button>
-          <button onclick="updateScore(${index}, -2)">早退</button>
-          <button onclick="updateScore(${index}, -10)">未到</button>
+          <button onclick="deleteWorker(${index})">刪除</button>
         </td>
       </tr>
     `;
@@ -147,3 +139,14 @@ window.onload = function() {
   renderDispatch();
   loadWorkerOptions();
 };
+
+function deleteWorker(index) {
+  let workers = JSON.parse(localStorage.getItem("workers")) || [];
+
+  workers.splice(index, 1);
+
+  localStorage.setItem("workers", JSON.stringify(workers));
+
+  renderWorkers();
+  loadWorkerOptions();
+}
