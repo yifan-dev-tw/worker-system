@@ -132,15 +132,19 @@ function renderDispatch() {
         <th>員工</th>
         <th>地點</th>
         <th>日期</th>
+        <th>操作</th>
       </tr>
   `;
 
-  list.forEach(function(d) {
+  list.forEach(function(d, index) {
     html += `
       <tr>
         <td>${d.name}</td>
         <td>${d.location}</td>
         <td>${d.date}</td>
+        <td>
+          <button onclick="deleteDispatch(${index})">刪除</button>
+        </td>
       </tr>
     `;
   });
@@ -170,4 +174,18 @@ function deleteWorker(index) {
 
   renderWorkers();
   loadWorkerOptions();
+}
+
+function deleteDispatch(index) {
+  let list = JSON.parse(localStorage.getItem("dispatch")) || [];
+
+  if (!confirm("確定刪除這筆派工紀錄？")) {
+    return;
+  }
+
+  list.splice(index, 1);
+
+  localStorage.setItem("dispatch", JSON.stringify(list));
+
+  renderDispatch();
 }
