@@ -97,4 +97,5 @@ async function loadDispatch() {
 window.onload = function () {
   loadWorkers();
   loadDispatch();
+  loadWorkerOptions();
 };
