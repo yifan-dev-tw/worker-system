@@ -3,17 +3,19 @@ import { signInWithEmailAndPassword }
 from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
 const loginBtn = document.getElementById("loginBtn");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
 
-loginBtn.onclick = async () => {
+loginBtn.addEventListener("click", async () => {
   try {
     await signInWithEmailAndPassword(
       auth,
-      email.value,
-      password.value
+      emailInput.value,
+      passwordInput.value
     );
 
     location.href = "admin.html";
-  } catch {
-    alert("登入失敗");
+  } catch (err) {
+    alert("登入失敗：" + err.message);
   }
-};
+});
