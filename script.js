@@ -46,3 +46,47 @@ async function loadWorkers() {
 }
 
 window.onload = loadWorkers;
+
+/* 新增派工 */
+window.addDispatch = async function () {
+  const name = document.getElementById("dispatchName").value;
+  const location = document.getElementById("dispatchLocation").value;
+  const date = document.getElementById("dispatchDate").value;
+
+  if (!name || !location || !date) {
+    alert("請填寫完整派工資料");
+    return;
+  }
+
+  try {
+    await addDoc(collection(db, "dispatch"), {
+      name,
+      location,
+      date
+    });
+
+    alert("派工新增成功");
+    loadDispatch();
+
+  } catch (e) {
+    console.error(e);
+    alert("派工新增失敗");
+  }
+};
+
+
+/* 讀取派工 */
+async function loadDispatch() {
+  const querySnapshot = await getDocs(collection(db, "dispatch"));
+
+  let html = "<ul>";
+
+  querySnapshot.forEach((doc) => {
+    const d = doc.data();
+    html += `<li>${d.name} - ${d.location} - ${d.date}</li>`;
+  });
+
+  html += "</ul>";
+
+  document.getElementById("dispatchList").innerHTML = html;
+}
