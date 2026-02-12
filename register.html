@@ -120,7 +120,7 @@ button:hover{
 <input id="time">
 </div>
 
-<button onclick="alert('按鈕正常')">提交申請</button>
+<button onclick="submitRegister()">提交申請</button>
 
 <div class="footer">
 本平台僅用於物流派遣媒合作業，資料依個資法規定使用。
@@ -129,6 +129,7 @@ button:hover{
 </div>
 
 <script type="module">
+alert("register script loaded");
 import { db } from "./firebase.js";
 import { collection, addDoc } from
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
