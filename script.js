@@ -3,13 +3,7 @@ function submitData() {
   const name = document.getElementById("name").value;
   const phone = document.getElementById("phone").value;
 
-  if (!name || !phone) return;
-
-  const worker = {
-    name: name,
-    phone: phone,
-    score: 0
-  };
+  const worker = { name, phone };
 
   let workers = JSON.parse(localStorage.getItem("workers")) || [];
   workers.push(worker);
