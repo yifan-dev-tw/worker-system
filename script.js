@@ -215,3 +215,7 @@ async function loadWorkers() {
 
   document.getElementById("workerList").innerHTML = html;
 }
+
+window.onload = function() {
+  loadWorkers();
+};
