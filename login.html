@@ -1,49 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<title>登入</title>
-</head>
-
-<body>
-
-<h2>管理者登入</h2>
-
-<input id="email" placeholder="Email">
-<br><br>
-<input id="password" type="password" placeholder="Password">
-<br><br>
-
-<button id="loginBtn">登入</button>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import {
-  getAuth,
-  signInWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-
-const firebaseConfig = {
-  // 貼上你的 firebaseConfig
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-document.getElementById("loginBtn").onclick = async () => {
-  try {
-    await signInWithEmailAndPassword(
-      auth,
-      email.value,
-      password.value
-    );
-
-    location.href = "admin.html";
-  } catch (err) {
-    alert(err.message);
-  }
-};
-</script>
-
+<body style="font-size:40px;">
+LOGIN PAGE TEST
 </body>
 </html>
