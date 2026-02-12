@@ -1,5 +1,3 @@
-alert("script.js 已載入");
-
 import { db } from "./firebase.js";
 import {
   collection,
@@ -9,8 +7,6 @@ import {
 
 /* 新增員工 */
 window.submitData = async function () {
-  alert("按鈕有連到");
-
   const name = document.getElementById("name").value;
   const phone = document.getElementById("phone").value;
 
@@ -19,39 +15,29 @@ window.submitData = async function () {
     return;
   }
 
-  try {
-    await addDoc(collection(db, "workers"), {
-      name,
-      phone,
-      score: 0
-    });
+  await addDoc(collection(db, "workers"), {
+    name,
+    phone,
+    score: 0
+  });
 
-    alert("新增成功");
-    loadWorkers();
-
-  } catch (e) {
-    console.error(e);
-    alert("新增失敗");
-  }
+  alert("新增成功");
+  loadWorkers();
 };
 
 /* 讀取員工 */
-async function loadWorkerOptions() {
+async function loadWorkers() {
   const querySnapshot = await getDocs(collection(db, "workers"));
-  const select = document.getElementById("dispatchName");
 
-  select.innerHTML = "";
-
+  let html = "<ul>";
   querySnapshot.forEach((doc) => {
     const w = doc.data();
-
-    const option = document.createElement("option");
-    option.value = w.name;
-    option.textContent = w.name;
-
-    select.appendChild(option);
+    html += `<li>${w.name} - ${w.phone} - ${w.score}</li>`;
   });
-}
+  html += "</ul>";
+
+  document.getElementById("workerList").innerHTML = html;
+}   // ← 這一行是關鍵（你原本少了）
 
 /* 新增派工 */
 window.addDispatch = async function () {
@@ -64,20 +50,14 @@ window.addDispatch = async function () {
     return;
   }
 
-  try {
-    await addDoc(collection(db, "dispatch"), {
-      name,
-      location,
-      date
-    });
+  await addDoc(collection(db, "dispatch"), {
+    name,
+    location,
+    date
+  });
 
-    alert("派工新增成功");
-    loadDispatch();
-
-  } catch (e) {
-    console.error(e);
-    alert("派工新增失敗");
-  }
+  alert("派工新增成功");
+  loadDispatch();
 };
 
 /* 讀取派工 */
@@ -97,5 +77,4 @@ async function loadDispatch() {
 window.onload = function () {
   loadWorkers();
   loadDispatch();
-  loadWorkerOptions();
 };
