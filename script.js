@@ -1,6 +1,19 @@
 function submitData() {
-  const name = document.getElementById("name").value;
-  const phone = document.getElementById("phone").value;
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+
+  if (!name || !phone) {
+    alert("請輸入姓名與電話");
+    return;
+  }
+
+  let workers = JSON.parse(localStorage.getItem("workers")) || [];
+
+  // 防止重複新增員工（加在這裡）
+  if (workers.some(w => w.name === name)) {
+    alert("員工已存在");
+    return;
+  }
 
   const worker = {
     name: name,
@@ -8,12 +21,14 @@ function submitData() {
     score: 0
   };
 
-  let workers = JSON.parse(localStorage.getItem("workers")) || [];
   workers.push(worker);
   localStorage.setItem("workers", JSON.stringify(workers));
 
   renderWorkers();
   loadWorkerOptions();
+
+  document.getElementById("name").value = "";
+  document.getElementById("phone").value = "";
 }
 
 // 員工列表
@@ -94,9 +109,11 @@ function addDispatch() {
   // 完成派工自動加分
  let workers = JSON.parse(localStorage.getItem("workers")) || [];
 
- workers.forEach(function(w) {
+workers.forEach(function(w) {
   if (w.name === name) {
-    w.score = (w.score || 0) + 2;
+    let score = (w.score || 0) + 2;
+    if (score > 100) score = 100;
+    w.score = score;
   }
 });
 
@@ -142,6 +159,10 @@ window.onload = function() {
 
 function deleteWorker(index) {
   let workers = JSON.parse(localStorage.getItem("workers")) || [];
+
+  if (!confirm("確定要刪除這位員工嗎？")) {
+    return;
+  }
 
   workers.splice(index, 1);
 
