@@ -7,6 +7,8 @@ import {
 
 /* 新增員工 */
 window.submitData = async function () {
+  alert("按鈕有連到"); // 測試用
+
   const name = document.getElementById("name").value;
   const phone = document.getElementById("phone").value;
 
