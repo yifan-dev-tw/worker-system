@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>工人登記</title>
+
+<style>
+body {
+  font-family: Arial;
+  background:#f3f4f6;
+  padding:40px;
+}
+
+.card{
+  max-width:500px;
+  margin:auto;
+  background:white;
+  padding:25px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+input,button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+button{
+  background:#2563eb;
+  color:white;
+  border:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+<h2>物流人力登記</h2>
+
+<input id="name" placeholder="姓名">
+<input id="phone" placeholder="電話">
+<input id="area" placeholder="居住地">
+
+<button onclick="register()">送出資料</button>
+</div>
+
+<script type="module">
+import { db } from "./firebase.js";
+import {
+  collection,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+window.register = async function(){
+  const name = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
+  const area = document.getElementById("area").value;
+
+  if(!name || !phone){
+    alert("請填寫完整資料");
+    return;
+  }
+
+  await addDoc(collection(db,"applicants"),{
+    name,
+    phone,
+    area,
+    createdAt: new Date()
+  });
+
+  alert("登記成功！");
+};
+</script>
+
+</body>
+</html>
