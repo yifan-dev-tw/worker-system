@@ -1,4 +1,4 @@
-function submitData() {
+async function submitData() {
   const name = document.getElementById("name").value.trim();
   const phone = document.getElementById("phone").value.trim();
 
@@ -7,53 +7,48 @@ function submitData() {
     return;
   }
 
-  let workers = JSON.parse(localStorage.getItem("workers")) || [];
+  const { collection, addDoc } = await import(
+    "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
+  );
 
-  // 防止重複新增員工（加在這裡）
-  if (workers.some(w => w.name === name)) {
-    alert("員工已存在");
-    return;
-  }
-
-  const worker = {
+  await addDoc(collection(window.db, "workers"), {
     name: name,
     phone: phone,
     score: 0
-  };
+  });
 
-  workers.push(worker);
-  localStorage.setItem("workers", JSON.stringify(workers));
-
-  renderWorkers();
-  loadWorkerOptions();
+  alert("新增成功");
 
   document.getElementById("name").value = "";
   document.getElementById("phone").value = "";
+
+  renderWorkers();
 }
 
 // 員工列表
-function renderWorkers() {
-  let workers = JSON.parse(localStorage.getItem("workers")) || [];
+async function renderWorkers() {
+  const { collection, getDocs } = await import(
+    "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
+  );
+
+  const querySnapshot = await getDocs(collection(window.db, "workers"));
 
   let html = `
-    <table border="1" style="width:100%; border-collapse:collapse;">
+    <table>
       <tr>
         <th>姓名</th>
         <th>電話</th>
         <th>評分</th>
-        <th>操作</th>
       </tr>
   `;
 
-  workers.forEach(function(w, index) {
+  querySnapshot.forEach((doc) => {
+    const w = doc.data();
     html += `
       <tr>
         <td>${w.name}</td>
         <td>${w.phone}</td>
         <td>${w.score ?? 0}</td>
-        <td>
-          <button onclick="deleteWorker(${index})">刪除</button>
-        </td>
       </tr>
     `;
   });
