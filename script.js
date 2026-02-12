@@ -1,3 +1,5 @@
+alert("script.js 已載入");
+
 import { db } from "./firebase.js";
 import {
   collection,
