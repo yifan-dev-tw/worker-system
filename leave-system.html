@@ -127,6 +127,10 @@ button {
 <div class="card">
   數據統計
   <div id="stats"></div>
+
+  <button onclick="clearAll()" style="background:#e74c3c;">
+清除所有紀錄
+</button>
 </div>
 
 <div class="card">
@@ -238,6 +242,20 @@ function addLeave() {
 renderWorkers();
 renderLeaves();
 renderStats();
+
+function clearAll() {
+  if (!confirm("確定要清除所有資料嗎？")) return;
+
+  localStorage.removeItem("workers");
+  localStorage.removeItem("leaves");
+
+  workers = [];
+  leaves = [];
+
+  renderWorkers();
+  renderLeaves();
+  renderStats();
+}
 </script>
 
 </body>
