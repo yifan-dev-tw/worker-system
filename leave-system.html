@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>派工請假系統</title>
+<title>員工請假管理系統</title>
 
 <style>
 body {
@@ -15,103 +15,122 @@ body {
 .header {
   background: #2c3e50;
   color: white;
-  padding: 16px;
-  font-size: 20px;
+  padding: 14px;
   text-align: center;
+  font-size: 18px;
 }
 
 .container {
-  max-width: 480px;
+  max-width: 420px;
   margin: auto;
-  padding: 14px;
+  padding: 12px;
 }
 
 .card {
   background: white;
-  border-radius: 12px;
-  padding: 14px;
-  margin-bottom: 14px;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
 }
 
-input, select {
+input, select, textarea {
   width: 100%;
-  padding: 6px 8px;
+  padding: 6px;
   margin-top: 6px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 1px solid #ddd;
-  font-size: 14px;
-  height: 32px;
+  font-size: 13px;
   box-sizing: border-box;
 }
 
-textarea {
-  width: 100%;
-  padding: 8px;
-  margin-top: 6px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-  height: 60px;
-}
+textarea { height: 45px; }
 
 button {
-  padding: 10px;
+  width: 100%;
+  padding: 8px;
+  margin-top: 8px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   background: #3498db;
   color: white;
-  font-size: 14px;
+}
+
+.workerTitle {
+  font-weight: bold;
   margin-top: 10px;
+  border-bottom: 1px solid #ddd;
 }
 
-.record {
-  background: #f7f9fc;
-  border-radius: 8px;
-  padding: 10px;
-  margin-top: 8px;
-  font-size: 14px;
+.recordLine {
+  font-size: 13px;
+  padding: 4px 0;
 }
 
-.deleteBtn {
-  background: #e74c3c;
-  margin-top: 6px;
-  width: 100%;
+.urgent {
+  color: red;
+  font-weight: bold;
+}
+
+.statLine {
+  font-size: 13px;
+  padding: 3px 0;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">派工請假系統</div>
+<div class="header">員工請假管理系統</div>
 
 <div class="container">
 
 <div class="card">
-  <div>新增員工</div>
-  <input id="newWorker" placeholder="輸入員工姓名">
+  新增員工
+  <input id="newWorker">
   <button onclick="addWorker()">加入員工</button>
 </div>
 
 <div class="card">
-  <div>請假登記</div>
-
+  請假登記
   <select id="workerSelect"></select>
 
-  <div>請假日期</div>
+  請假日期
   <input type="date" id="date">
 
+  請假類型
   <select id="leaveType">
-    <option value="正常請假">正常請假</option>
+    <option value="提前請假">提前請假</option>
     <option value="臨時請假">臨時請假</option>
   </select>
 
-  <textarea id="note" placeholder="備註"></textarea>
+  請假事由
+  <input id="reason">
 
-  <button onclick="addLeave()">送出記錄</button>
+  備註
+  <textarea id="note"></textarea>
+
+  提出日期
+  <input type="date" id="reportDate">
+
+  提出時間
+  <input type="time" id="reportTime">
+
+  告知對象
+  <select id="reportTo">
+    <option value="淦哥">淦哥</option>
+    <option value="嫂子">嫂子</option>
+  </select>
+
+  <button onclick="addLeave()">送出</button>
 </div>
 
 <div class="card">
-  <div>請假紀錄</div>
+  數據統計
+  <div id="stats"></div>
+</div>
+
+<div class="card">
+  請假紀錄
   <div id="list"></div>
 </div>
 
@@ -129,36 +148,51 @@ function save() {
 function renderWorkers() {
   const select = document.getElementById("workerSelect");
   select.innerHTML = "";
-  workers.forEach(w => {
-    select.innerHTML += `<option>${w}</option>`;
-  });
-}
-
-function deleteLeave(index) {
-  leaves.splice(index, 1);
-  save();
-  renderLeaves();
+  workers.forEach(w => select.innerHTML += `<option>${w}</option>`);
 }
 
 function renderLeaves() {
   const list = document.getElementById("list");
   list.innerHTML = "";
 
-  leaves.slice().reverse().forEach((l, i) => {
-    const realIndex = leaves.length - 1 - i;
-
-    list.innerHTML += `
-      <div class="record">
-        <b>${l.worker}</b><br>
-        日期：${l.date}<br>
-        ${l.type}<br>
-        備註：${l.note || "-"}
-        <button class="deleteBtn" onclick="deleteLeave(${realIndex})">
-          刪除
-        </button>
-      </div>
-    `;
+  const grouped = {};
+  leaves.forEach(l => {
+    if (!grouped[l.worker]) grouped[l.worker] = [];
+    grouped[l.worker].push(l);
   });
+
+  Object.keys(grouped).forEach(worker => {
+    list.innerHTML += `<div class="workerTitle">${worker}</div>`;
+
+    grouped[worker].forEach(l => {
+      list.innerHTML += `
+        <div class="recordLine">
+          ${l.date} ｜ 
+          <span class="${l.type === '臨時請假' ? 'urgent' : ''}">
+            ${l.type}
+          </span>
+          ｜ ${l.reason || "-"}
+          <br>
+          提出：${l.reportDate || "-"} ${l.reportTime || ""} → ${l.reportTo || "-"}
+        </div>
+      `;
+    });
+  });
+}
+
+function renderStats() {
+  const stats = document.getElementById("stats");
+  stats.innerHTML = "";
+
+  let total = leaves.length;
+  let urgent = leaves.filter(l => l.type === "臨時請假").length;
+  let advance = total - urgent;
+
+  stats.innerHTML = `
+    <div class="statLine">總請假：${total}</div>
+    <div class="statLine">提前請假：${advance}</div>
+    <div class="statLine">臨時請假：${urgent}</div>
+  `;
 }
 
 function addWorker() {
@@ -176,20 +210,34 @@ function addLeave() {
   const worker = document.getElementById("workerSelect").value;
   const date = document.getElementById("date").value;
   const type = document.getElementById("leaveType").value;
+  const reason = document.getElementById("reason").value;
   const note = document.getElementById("note").value;
 
-  if (!worker || !date) {
-    alert("請填寫完整資料");
-    return;
-  }
+  const reportDate = document.getElementById("reportDate").value;
+  const reportTime = document.getElementById("reportTime").value;
+  const reportTo = document.getElementById("reportTo").value;
 
-  leaves.push({ worker, date, type, note });
+  if (!worker || !date) return;
+
+  leaves.push({
+    worker,
+    date,
+    type,
+    reason,
+    note,
+    reportDate,
+    reportTime,
+    reportTo
+  });
+
   save();
   renderLeaves();
+  renderStats();
 }
 
 renderWorkers();
 renderLeaves();
+renderStats();
 </script>
 
 </body>
