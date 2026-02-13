@@ -38,7 +38,7 @@ label {
   color: #666;
 }
 
-input, select, textarea {
+input, select {
   width: 100%;
   padding: 8px 10px;
   margin-top: 6px;
@@ -46,12 +46,6 @@ input, select, textarea {
   border: 1px solid #ddd;
   font-size: 14px;
   box-sizing: border-box;
-}
-
-input[type="date"],
-input[type="time"] {
-  height: 36px;
-  line-height: 36px;
 }
 
 textarea {
@@ -62,6 +56,17 @@ textarea {
   border: 1px solid #ddd;
   font-size: 14px;
   height: 60px;
+  box-sizing: border-box;
+}
+
+/* 日期時間並排 */
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.col {
+  flex: 1;
 }
 
 button {
@@ -102,11 +107,17 @@ button {
 
   <select id="workerSelect"></select>
 
-  <label>請假日期</label>
-  <input type="date" id="date">
+  <div class="row">
+    <div class="col">
+      <label>日期</label>
+      <input type="date" id="date">
+    </div>
 
-  <label>請假時間</label>
-  <input type="time" id="time">
+    <div class="col">
+      <label>時間</label>
+      <input type="time" id="time">
+    </div>
+  </div>
 
   <select id="leaveType">
     <option value="正常請假">正常請假</option>
@@ -150,7 +161,7 @@ function renderLeaves() {
     list.innerHTML += `
       <div class="record">
         <b>${l.worker}</b><br>
-        日期：${l.date}<br>
+        日期：${l.date}　
         時間：${l.time}<br>
         ${l.type}<br>
         備註：${l.note || "-"}
