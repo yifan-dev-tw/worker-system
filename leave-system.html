@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>請假記錄系統</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #f4f6f8;
+  padding: 20px;
+}
+
+.container {
+  max-width: 600px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+input, select, textarea, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.record {
+  background: #eef2f7;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 6px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>請假記錄系統</h2>
+
+  <!-- 新增員工 -->
+  <input id="newWorker" placeholder="新增員工姓名">
+  <button onclick="addWorker()">加入員工</button>
+
+  <!-- 選擇員工 -->
+  <select id="workerSelect"></select>
+
+  <!-- 日期時間 -->
+  <input type="datetime-local" id="datetime">
+
+  <!-- 請假類型 -->
+  <select id="leaveType">
+    <option value="正常請假">正常請假</option>
+    <option value="臨時請假">臨時請假</option>
+  </select>
+
+  <!-- 備註 -->
+  <textarea id="note" placeholder="備註"></textarea>
+
+  <button onclick="addLeave()">記錄請假</button>
+
+  <h3>請假紀錄</h3>
+  <div id="list"></div>
+</div>
+
+<script>
+let workers = JSON.parse(localStorage.getItem("workers")) || [];
+let leaves = JSON.parse(localStorage.getItem("leaves")) || [];
+
+function save() {
+  localStorage.setItem("workers", JSON.stringify(workers));
+  localStorage.setItem("leaves", JSON.stringify(leaves));
+}
+
+function renderWorkers() {
+  const select = document.getElementById("workerSelect");
+  select.innerHTML = "";
+  workers.forEach(w => {
+    select.innerHTML += `<option value="${w}">${w}</option>`;
+  });
+}
+
+function renderLeaves() {
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  leaves.forEach(l => {
+    list.innerHTML += `
+      <div class="record">
+        <b>${l.worker}</b><br>
+        時間：${l.datetime}<br>
+        類型：${l.type}<br>
+        備註：${l.note || "-"}
+      </div>
+    `;
+  });
+}
+
+function addWorker() {
+  const name = document.getElementById("newWorker").value;
+  if (!name) return;
+
+  if (!workers.includes(name)) {
+    workers.push(name);
+  }
+
+  document.getElementById("newWorker").value = "";
+  save();
+  renderWorkers();
+}
+
+function addLeave() {
+  const worker = document.getElementById("workerSelect").value;
+  const datetime = document.getElementById("datetime").value;
+  const type = document.getElementById("leaveType").value;
+  const note = document.getElementById("note").value;
+
+  if (!worker || !datetime) {
+    alert("請選擇員工與時間");
+    return;
+  }
+
+  leaves.push({ worker, datetime, type, note });
+  save();
+  renderLeaves();
+}
+
+renderWorkers();
+renderLeaves();
+</script>
+
+</body>
+</html>
