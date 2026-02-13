@@ -15,7 +15,7 @@ body {
 .header {
   background: #2c3e50;
   color: white;
-  padding: 18px;
+  padding: 16px;
   font-size: 20px;
   text-align: center;
 }
@@ -23,41 +23,58 @@ body {
 .container {
   max-width: 480px;
   margin: auto;
-  padding: 16px;
+  padding: 14px;
 }
 
 .card {
   background: white;
-  border-radius: 14px;
-  padding: 16px;
-  margin-bottom: 16px;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 14px;
 }
 
-input, select, textarea {
+label {
+  font-size: 13px;
+  color: #666;
+}
+
+input, select {
   width: 100%;
-  padding: 14px;
-  margin-top: 8px;
-  border-radius: 10px;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 8px;
   border: 1px solid #ddd;
-  font-size: 16px;
+  font-size: 14px;
+  height: 38px;
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  height: 60px;
 }
 
 button {
   width: 100%;
-  padding: 16px;
+  padding: 12px;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   background: #3498db;
   color: white;
-  font-size: 16px;
-  margin-top: 12px;
+  font-size: 15px;
+  margin-top: 10px;
 }
 
 .record {
   background: #f7f9fc;
-  border-radius: 10px;
-  padding: 12px;
-  margin-top: 10px;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 8px;
+  font-size: 14px;
 }
 </style>
 </head>
@@ -69,16 +86,21 @@ button {
 <div class="container">
 
 <div class="card">
-  <div>新增員工</div>
+  <label>新增員工</label>
   <input id="newWorker" placeholder="輸入員工姓名">
   <button onclick="addWorker()">加入員工</button>
 </div>
 
 <div class="card">
-  <div>請假登記</div>
+  <label>請假登記</label>
 
   <select id="workerSelect"></select>
-  <input type="datetime-local" id="datetime">
+
+  <label>請假日期</label>
+  <input type="date" id="date">
+
+  <label>請假時間</label>
+  <input type="time" id="time">
 
   <select id="leaveType">
     <option value="正常請假">正常請假</option>
@@ -91,7 +113,7 @@ button {
 </div>
 
 <div class="card">
-  <div>請假紀錄</div>
+  <label>請假紀錄</label>
   <div id="list"></div>
 </div>
 
@@ -122,7 +144,8 @@ function renderLeaves() {
     list.innerHTML += `
       <div class="record">
         <b>${l.worker}</b><br>
-        ${l.datetime}<br>
+        日期：${l.date}<br>
+        時間：${l.time}<br>
         ${l.type}<br>
         備註：${l.note || "-"}
       </div>
@@ -143,16 +166,17 @@ function addWorker() {
 
 function addLeave() {
   const worker = document.getElementById("workerSelect").value;
-  const datetime = document.getElementById("datetime").value;
+  const date = document.getElementById("date").value;
+  const time = document.getElementById("time").value;
   const type = document.getElementById("leaveType").value;
   const note = document.getElementById("note").value;
 
-  if (!worker || !datetime) {
+  if (!worker || !date || !time) {
     alert("請填寫完整資料");
     return;
   }
 
-  leaves.push({ worker, datetime, type, note });
+  leaves.push({ worker, date, time, type, note });
   save();
   renderLeaves();
 }
