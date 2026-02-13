@@ -38,14 +38,20 @@ label {
   color: #666;
 }
 
-input, select {
+input, select, textarea {
   width: 100%;
-  padding: 10px;
+  padding: 8px 10px;
   margin-top: 6px;
   border-radius: 8px;
   border: 1px solid #ddd;
   font-size: 14px;
-  height: 38px;
+  box-sizing: border-box;
+}
+
+input[type="date"],
+input[type="time"] {
+  height: 36px;
+  line-height: 36px;
 }
 
 textarea {
