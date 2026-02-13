@@ -2,65 +2,100 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<title>請假記錄系統</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>派工請假系統</title>
 
 <style>
 body {
-  font-family: Arial;
-  background: #f4f6f8;
-  padding: 20px;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f2f4f7;
+}
+
+.header {
+  background: #2c3e50;
+  color: white;
+  padding: 18px;
+  font-size: 20px;
+  text-align: center;
 }
 
 .container {
-  max-width: 600px;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
+  padding: 16px;
 }
 
-input, select, textarea, button {
+.card {
+  background: white;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+}
+
+input, select, textarea {
   width: 100%;
-  padding: 10px;
-  margin-top: 10px;
+  padding: 14px;
+  margin-top: 8px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+}
+
+button {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  background: #3498db;
+  color: white;
+  font-size: 16px;
+  margin-top: 12px;
 }
 
 .record {
-  background: #eef2f7;
-  padding: 10px;
+  background: #f7f9fc;
+  border-radius: 10px;
+  padding: 12px;
   margin-top: 10px;
-  border-radius: 6px;
+  font-size: 15px;
 }
 </style>
 </head>
 
 <body>
 
+<div class="header">派工請假系統</div>
+
 <div class="container">
-  <h2>請假記錄系統</h2>
 
-  <!-- 新增員工 -->
-  <input id="newWorker" placeholder="新增員工姓名">
+<div class="card">
+  <b>新增員工</b>
+  <input id="newWorker" placeholder="輸入員工姓名">
   <button onclick="addWorker()">加入員工</button>
+</div>
 
-  <!-- 選擇員工 -->
+<div class="card">
+  <b>請假登記</b>
+
   <select id="workerSelect"></select>
 
-  <!-- 日期時間 -->
   <input type="datetime-local" id="datetime">
 
-  <!-- 請假類型 -->
   <select id="leaveType">
     <option value="正常請假">正常請假</option>
     <option value="臨時請假">臨時請假</option>
   </select>
 
-  <!-- 備註 -->
   <textarea id="note" placeholder="備註"></textarea>
 
-  <button onclick="addLeave()">記錄請假</button>
+  <button onclick="addLeave()">送出記錄</button>
+</div>
 
-  <h3>請假紀錄</h3>
+<div class="card">
+  <b>請假紀錄</b>
   <div id="list"></div>
+</div>
+
 </div>
 
 <script>
@@ -84,12 +119,12 @@ function renderLeaves() {
   const list = document.getElementById("list");
   list.innerHTML = "";
 
-  leaves.forEach(l => {
+  leaves.slice().reverse().forEach(l => {
     list.innerHTML += `
       <div class="record">
         <b>${l.worker}</b><br>
-        時間：${l.datetime}<br>
-        類型：${l.type}<br>
+        ${l.datetime}<br>
+        ${l.type}<br>
         備註：${l.note || "-"}
       </div>
     `;
