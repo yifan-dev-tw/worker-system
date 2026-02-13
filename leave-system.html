@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>員工請假系統</title>
+<title>派工請假系統</title>
 
 <style>
 body {
@@ -33,11 +33,6 @@ body {
   margin-bottom: 14px;
 }
 
-label {
-  font-size: 13px;
-  color: #666;
-}
-
 input, select {
   width: 100%;
   padding: 6px 8px;
@@ -45,33 +40,27 @@ input, select {
   border-radius: 8px;
   border: 1px solid #ddd;
   font-size: 14px;
-  box-sizing: border-box;
   height: 32px;
-}
-  input[type="date"] {
-  height: 30px;
-  font-size: 13px;
+  box-sizing: border-box;
 }
 
 textarea {
   width: 100%;
-  padding: 10px;
+  padding: 8px;
   margin-top: 6px;
   border-radius: 8px;
   border: 1px solid #ddd;
   font-size: 14px;
   height: 60px;
-  box-sizing: border-box;
 }
 
 button {
-  width: 100%;
-  padding: 12px;
+  padding: 10px;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   background: #3498db;
   color: white;
-  font-size: 15px;
+  font-size: 14px;
   margin-top: 10px;
 }
 
@@ -82,27 +71,33 @@ button {
   margin-top: 8px;
   font-size: 14px;
 }
+
+.deleteBtn {
+  background: #e74c3c;
+  margin-top: 6px;
+  width: 100%;
+}
 </style>
 </head>
 
 <body>
 
-<div class="header">二更笑請假系統</div>
+<div class="header">派工請假系統</div>
 
 <div class="container">
 
 <div class="card">
-  <label>新增員工</label>
+  <div>新增員工</div>
   <input id="newWorker" placeholder="輸入員工姓名">
   <button onclick="addWorker()">加入員工</button>
 </div>
 
 <div class="card">
-  <label>請假登記</label>
+  <div>請假登記</div>
 
   <select id="workerSelect"></select>
 
-  <label>請假日期</label>
+  <div>請假日期</div>
   <input type="date" id="date">
 
   <select id="leaveType">
@@ -116,7 +111,7 @@ button {
 </div>
 
 <div class="card">
-  <label>請假紀錄</label>
+  <div>請假紀錄</div>
   <div id="list"></div>
 </div>
 
@@ -139,17 +134,28 @@ function renderWorkers() {
   });
 }
 
+function deleteLeave(index) {
+  leaves.splice(index, 1);
+  save();
+  renderLeaves();
+}
+
 function renderLeaves() {
   const list = document.getElementById("list");
   list.innerHTML = "";
 
-  leaves.slice().reverse().forEach(l => {
+  leaves.slice().reverse().forEach((l, i) => {
+    const realIndex = leaves.length - 1 - i;
+
     list.innerHTML += `
       <div class="record">
         <b>${l.worker}</b><br>
         日期：${l.date}<br>
         ${l.type}<br>
         備註：${l.note || "-"}
+        <button class="deleteBtn" onclick="deleteLeave(${realIndex})">
+          刪除
+        </button>
       </div>
     `;
   });
