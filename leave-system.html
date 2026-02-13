@@ -40,12 +40,17 @@ label {
 
 input, select {
   width: 100%;
-  padding: 8px 10px;
+  padding: 6px 8px;
   margin-top: 6px;
   border-radius: 8px;
   border: 1px solid #ddd;
   font-size: 14px;
   box-sizing: border-box;
+  height: 32px;
+}
+  input[type="date"] {
+  height: 30px;
+  font-size: 13px;
 }
 
 textarea {
@@ -57,16 +62,6 @@ textarea {
   font-size: 14px;
   height: 60px;
   box-sizing: border-box;
-}
-
-/* 日期時間並排 */
-.row {
-  display: flex;
-  gap: 10px;
-}
-
-.col {
-  flex: 1;
 }
 
 button {
@@ -92,7 +87,7 @@ button {
 
 <body>
 
-<div class="header">派工請假系統</div>
+<div class="header">阿咘請假系統</div>
 
 <div class="container">
 
@@ -107,17 +102,8 @@ button {
 
   <select id="workerSelect"></select>
 
-  <div class="row">
-    <div class="col">
-      <label>日期</label>
-      <input type="date" id="date">
-    </div>
-
-    <div class="col">
-      <label>時間</label>
-      <input type="time" id="time">
-    </div>
-  </div>
+  <label>請假日期</label>
+  <input type="date" id="date">
 
   <select id="leaveType">
     <option value="正常請假">正常請假</option>
@@ -161,8 +147,7 @@ function renderLeaves() {
     list.innerHTML += `
       <div class="record">
         <b>${l.worker}</b><br>
-        日期：${l.date}　
-        時間：${l.time}<br>
+        日期：${l.date}<br>
         ${l.type}<br>
         備註：${l.note || "-"}
       </div>
@@ -184,16 +169,15 @@ function addWorker() {
 function addLeave() {
   const worker = document.getElementById("workerSelect").value;
   const date = document.getElementById("date").value;
-  const time = document.getElementById("time").value;
   const type = document.getElementById("leaveType").value;
   const note = document.getElementById("note").value;
 
-  if (!worker || !date || !time) {
+  if (!worker || !date) {
     alert("請填寫完整資料");
     return;
   }
 
-  leaves.push({ worker, date, time, type, note });
+  leaves.push({ worker, date, type, note });
   save();
   renderLeaves();
 }
