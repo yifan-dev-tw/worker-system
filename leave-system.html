@@ -169,18 +169,19 @@ function renderLeaves() {
     list.innerHTML += `<div class="workerTitle">${worker}</div>`;
 
     grouped[worker].forEach(l => {
-      list.innerHTML += `
-        <div class="recordLine">
-          ${l.date} ｜ 
-          <span class="${l.type === '臨時請假' ? 'urgent' : ''}">
-            ${l.type}
-          </span>
-          ｜ ${l.reason || "-"}
-          <br>
-          提出：${l.reportDate || "-"} ${l.reportTime || ""} → ${l.reportTo || "-"}
-        </div>
-      `;
-    });
+  list.innerHTML += `
+    <div class="recordLine">
+      ${l.date} ｜ 
+      <span class="${l.type === '臨時請假' ? 'urgent' : ''}">
+        ${l.type}
+      </span>
+      ｜ ${l.reason || "-"}
+      ${l.note ? "｜ 備註：" + l.note : ""}
+      <br>
+      提出：${l.reportDate || "-"} ${l.reportTime || ""} → ${l.reportTo || "-"}
+    </div>
+  `;
+});
   });
 }
 
