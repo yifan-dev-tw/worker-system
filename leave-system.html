@@ -1,3 +1,10 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>派工請假系統</title>
+
 <style>
 body {
   margin: 0;
@@ -14,7 +21,6 @@ body {
 }
 
 .container {
-  width: 100%;
   max-width: 480px;
   margin: auto;
   padding: 16px;
@@ -25,7 +31,6 @@ body {
   border-radius: 14px;
   padding: 16px;
   margin-bottom: 16px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
 }
 
 input, select, textarea {
@@ -47,4 +52,114 @@ button {
   font-size: 16px;
   margin-top: 12px;
 }
+
+.record {
+  background: #f7f9fc;
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 10px;
+}
 </style>
+</head>
+
+<body>
+
+<div class="header">派工請假系統</div>
+
+<div class="container">
+
+<div class="card">
+  <div>新增員工</div>
+  <input id="newWorker" placeholder="輸入員工姓名">
+  <button onclick="addWorker()">加入員工</button>
+</div>
+
+<div class="card">
+  <div>請假登記</div>
+
+  <select id="workerSelect"></select>
+  <input type="datetime-local" id="datetime">
+
+  <select id="leaveType">
+    <option value="正常請假">正常請假</option>
+    <option value="臨時請假">臨時請假</option>
+  </select>
+
+  <textarea id="note" placeholder="備註"></textarea>
+
+  <button onclick="addLeave()">送出記錄</button>
+</div>
+
+<div class="card">
+  <div>請假紀錄</div>
+  <div id="list"></div>
+</div>
+
+</div>
+
+<script>
+let workers = JSON.parse(localStorage.getItem("workers")) || [];
+let leaves = JSON.parse(localStorage.getItem("leaves")) || [];
+
+function save() {
+  localStorage.setItem("workers", JSON.stringify(workers));
+  localStorage.setItem("leaves", JSON.stringify(leaves));
+}
+
+function renderWorkers() {
+  const select = document.getElementById("workerSelect");
+  select.innerHTML = "";
+  workers.forEach(w => {
+    select.innerHTML += `<option>${w}</option>`;
+  });
+}
+
+function renderLeaves() {
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  leaves.slice().reverse().forEach(l => {
+    list.innerHTML += `
+      <div class="record">
+        <b>${l.worker}</b><br>
+        ${l.datetime}<br>
+        ${l.type}<br>
+        備註：${l.note || "-"}
+      </div>
+    `;
+  });
+}
+
+function addWorker() {
+  const name = document.getElementById("newWorker").value;
+  if (!name) return;
+
+  if (!workers.includes(name)) workers.push(name);
+
+  document.getElementById("newWorker").value = "";
+  save();
+  renderWorkers();
+}
+
+function addLeave() {
+  const worker = document.getElementById("workerSelect").value;
+  const datetime = document.getElementById("datetime").value;
+  const type = document.getElementById("leaveType").value;
+  const note = document.getElementById("note").value;
+
+  if (!worker || !datetime) {
+    alert("請填寫完整資料");
+    return;
+  }
+
+  leaves.push({ worker, datetime, type, note });
+  save();
+  renderLeaves();
+}
+
+renderWorkers();
+renderLeaves();
+</script>
+
+</body>
+</html>
