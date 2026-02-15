@@ -2,35 +2,88 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>加入人力名單</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: "Noto Sans TC", Arial, sans-serif;
+  background: #f2f4f7;
+}
+
+.container {
+  max-width: 500px;
+  margin: 40px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: #2c3e50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.note {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+</style>
 </head>
 
 <body>
 
+<div class="container">
 <h2>加入人力名單</h2>
 
+<p class="note">
+填寫資料加入人力名單，後續將依工作需求聯繫安排。
+</p>
+
 <form id="form">
-姓名<br>
-<input name="name"><br><br>
+姓名
+<input name="name">
 
-電話<br>
-<input name="phone"><br><br>
+電話
+<input name="phone">
 
-LINE ID<br>
-<input name="line"><br><br>
+LINE ID
+<input name="line">
 
-工作類型<br>
+工作類型
 <select name="type">
 <option>工程</option>
 <option>物流</option>
 <option>工廠</option>
-</select><br><br>
+</select>
 
-工作經驗<br>
-<textarea name="exp"></textarea><br><br>
+工作經驗
+<textarea name="exp"></textarea>
 
-<button type="submit">送出</button>
+<button type="submit">送出登記</button>
 </form>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -42,8 +95,7 @@ const firebaseConfig = {
   projectId: "worker-system",
   storageBucket: "worker-system.appspot.com",
   messagingSenderId: "249724369179",
-  appId: "1:249724369179:web:9d14d30c499aec379dbbbe",
-  measurementId: "G-H4WTDJ84TG"
+  appId: "1:249724369179:web:9d14d30c499aec379dbbbe"
 };
 
 const app = initializeApp(firebaseConfig);
