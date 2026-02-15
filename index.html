@@ -1,92 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<title>人力派遣系統</title>
+<title>晴毅企業有限公司｜人力支援服務</title>
 
 <style>
 body {
-  font-family: Arial;
-  background: #f3f4f6;
-  padding: 30px;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  color: #333;
 }
 
-.card {
+nav {
   background: white;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
+  padding: 15px 30px;
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
 }
 
-input, select {
-  width: 100%;
-  padding: 8px;
-  margin: 6px 0;
-}
-
-button {
-  background: #2563eb;
+.hero {
+  background: #1f2937;
   color: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  margin: 2px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
   text-align: center;
+  padding: 80px 20px;
+}
+
+section {
+  max-width: 900px;
+  margin: auto;
+  padding: 50px 20px;
+}
+
+h2 {
+  margin-bottom: 10px;
+}
+
+footer {
+  background: #1f2937;
+  color: white;
+  text-align: center;
+  padding: 30px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>人力派遣系統</h1>
+<nav>
+晴毅企業有限公司
+</nav>
 
-<div class="card">
-<h3>新增員工</h3>
-<input id="name" placeholder="姓名">
-<input id="phone" placeholder="電話">
-<button onclick="submitData()">新增員工</button>
+<div class="hero">
+  <h1>人力支援與調度服務</h1>
+  <p>提供企業短期與長期人力解決方案</p>
 </div>
 
-<div class="card">
-<h3>員工列表</h3>
-<div id="workerList"></div>
-</div>
+<section>
+  <h2>服務介紹</h2>
+  <p>
+    晴毅企業有限公司提供人力支援與調度服務，可依企業需求安排短期或臨時人力，
+    協助快速補充人力並降低缺工風險。
+  </p>
+</section>
 
-<div class="card">
-<h3>新增派工</h3>
-<select id="dispatchName"></select>
-<input id="dispatchLocation" placeholder="工作地點">
-<input id="dispatchDate" placeholder="YYYY-MM-DD">
+<section>
+  <h2>工作機會</h2>
+  <p>
+    提供工程、工廠及物流相關工作機會，
+    短期與長期工作皆可安排，快速上工。
+  </p>
+</section>
 
-<select id="dispatchStatus">
-<option>完成</option>
-<option>準時</option>
-<option>遲到</option>
-<option>未到</option>
-<option>請假</option>
-<option>取消</option>
-</select>
+<section>
+  <h2>聯絡我們</h2>
+  <p>電話：＿＿＿＿＿＿＿＿</p>
+  <p>LINE：＿＿＿＿＿＿＿＿</p>
+</section>
 
-<button onclick="addDispatch()">新增派工</button>
-</div>
+<section>
+  <h2>長期合作</h2>
+  <p>
+    如有長期人力派遣需求，歡迎來電洽談。
+  </p>
+</section>
 
-<div class="card">
-<h3>派工列表</h3>
-<div id="dispatchList"></div>
-</div>
-
-<script type="module" src="./firebase.js"></script>
-<script type="module" src="./script.js"></script>
+<footer>
+晴毅企業有限公司 ｜ 統一編號 93564593<br>
+負責人 廖思堯 0985-554055
+桃園市八德區山下街11號6樓之1   
+</footer>
 
 </body>
 </html>
