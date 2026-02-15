@@ -3,38 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>加入人力名單</title>
+<title>人力資料登記</title>
 
 <style>
 body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
   margin: 0;
-  font-family: "Noto Sans TC", Arial, sans-serif;
-  background: #f2f4f7;
 }
 
-.container {
-  max-width: 500px;
-  margin: 40px auto;
+.section {
+  max-width: 520px;
+  margin: 20px auto;
   background: white;
-  padding: 30px;
+  padding: 24px;
   border-radius: 10px;
   border: 1px solid #e5e7eb;
 }
 
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
+label {
+  display: block;
+  margin-top: 12px;
+  font-weight: bold;
 }
 
-input, select, textarea {
+input, textarea {
   width: 100%;
   padding: 10px;
-  margin: 6px 0 14px;
-  border: 1px solid #ccc;
+  margin-top: 6px;
   border-radius: 6px;
+  border: 1px solid #ddd;
 }
 
 button {
+  margin-top: 20px;
   width: 100%;
   padding: 12px;
   background: #2c3e50;
@@ -45,79 +47,100 @@ button {
 }
 
 .note {
-  font-size: 14px;
   color: #666;
-  margin-bottom: 20px;
+  font-size: 13px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-<h2>加入人力名單</h2>
+<div class="section">
+  <h2>人力資料登記</h2>
 
-<p class="note">
-填寫資料加入人力名單，後續將依工作需求聯繫安排。
-</p>
+  <p class="note">
+    送出資料後將自動轉到LINE服務帳號，請記得加入好友確認已登記資料
+  </p>
 
-<form id="form">
-姓名
-<input name="name">
+  <label>姓名 *</label>
+  <input id="name">
 
-電話
-<input name="phone">
+  <label>年齡 *</label>
+  <input id="age" type="number">
 
-LINE ID
-<input name="line">
+  <label>電話 *</label>
+  <input id="phone">
 
-工作類型
-<select name="type">
-<option>工程</option>
-<option>物流</option>
-<option>工廠</option>
-</select>
+  <label>LINE ID *</label>
+  <input id="line">
 
-工作經驗
-<textarea name="exp"></textarea>
+  <label>地區 *</label>
+  <input id="area" placeholder="例如：桃園">
 
-<button type="submit">送出登記</button>
-</form>
+  <label>工作選項 *</label>
+  <div>
+    <input type="checkbox" name="workType" value="工程人力"> 工程人力<br>
+    <input type="checkbox" name="workType" value="物流作業"> 物流作業<br>
+    <input type="checkbox" name="workType" value="以上皆可"> 以上皆可<br>
+  </div>
+
+  <label>工作經驗</label>
+  <textarea id="exp"></textarea>
+
+  <button onclick="submitData()">送出資料</button>
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
+/* Firebase設定（保持你原本的） */
 const firebaseConfig = {
-  apiKey: "AIzaSyC-ajavChBSIK7uXIgcv5JTlxDj",
-  authDomain: "worker-system.firebaseapp.com",
-  projectId: "worker-system",
-  storageBucket: "worker-system.appspot.com",
-  messagingSenderId: "249724369179",
-  appId: "1:249724369179:web:9d14d30c499aec379dbbbe"
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "worker-system"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-document.getElementById("form").addEventListener("submit", async (e) => {
-  e.preventDefault();
+window.submitData = async () => {
 
-  const form = e.target;
+  const name = document.getElementById("name").value;
+  const age = document.getElementById("age").value;
+  const phone = document.getElementById("phone").value;
+  const line = document.getElementById("line").value;
+  const area = document.getElementById("area").value;
+  const exp = document.getElementById("exp").value;
+
+  const checked = document.querySelectorAll('input[name="workType"]:checked');
+  let workTypes = [];
+  checked.forEach(c => workTypes.push(c.value));
+
+  if(!name || !age || !phone || !line || !area || workTypes.length === 0){
+    alert("請填寫所有必填欄位");
+    return;
+  }
+
+  if(!confirm("送出後將轉到官方LINE加入好友，是否確認送出？")){
+    return;
+  }
 
   await addDoc(collection(db, "workers"), {
-    name: form.name.value,
-    phone: form.phone.value,
-    line: form.line.value,
-    type: form.type.value,
-    exp: form.exp.value,
-    createdAt: new Date()
+    name,
+    age,
+    phone,
+    line,
+    area,
+    workTypes,
+    exp,
+    createdAt: serverTimestamp()
   });
 
-  alert("已加入人力名單");
-  form.reset();
-});
+  alert("資料已登記完成");
+
+  window.location.href = "https://lin.ee/LPHakhX";
+};
 </script>
 
 </body>
