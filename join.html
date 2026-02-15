@@ -2,84 +2,70 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>加入人力名單｜晴毅企業有限公司</title>
-
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  margin: 0;
-}
-
-.container {
-  max-width: 600px;
-  margin: 40px auto;
-  background: white;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-h1 {
-  text-align: center;
-}
-
-input, select, textarea {
-  width: 100%;
-  padding: 10px;
-  margin: 8px 0 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-button {
-  background: #1f2937;
-  color: white;
-  border: none;
-  padding: 12px;
-  width: 100%;
-  border-radius: 5px;
-  font-size: 16px;
-}
-
-.note {
-  font-size: 14px;
-  color: #666;
-}
-</style>
+<title>加入人力名單</title>
 </head>
 
 <body>
 
-<div class="container">
-<h1>加入人力名單</h1>
+<h2>加入人力名單</h2>
 
-<p class="note">
-填寫基本資料後即可加入人力名單，後續將依工作需求與您聯繫。
-</p>
+<form id="form">
+姓名<br>
+<input name="name"><br><br>
 
-<label>姓名</label>
-<input type="text">
+電話<br>
+<input name="phone"><br><br>
 
-<label>電話</label>
-<input type="text">
+LINE ID<br>
+<input name="line"><br><br>
 
-<label>LINE ID</label>
-<input type="text">
+工作類型<br>
+<select name="type">
+<option>工程</option>
+<option>物流</option>
+<option>工廠</option>
+</select><br><br>
 
-<label>可工作類型</label>
-<select>
-  <option>工程</option>
-  <option>物流</option>
-  <option>工廠</option>
-</select>
+工作經驗<br>
+<textarea name="exp"></textarea><br><br>
 
-<label>工作經驗</label>
-<textarea rows="4"></textarea>
+<button type="submit">送出</button>
+</form>
 
-<button>送出登記</button>
-</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "貼你的",
+  authDomain: "貼你的",
+  projectId: "貼你的",
+  storageBucket: "貼你的",
+  messagingSenderId: "貼你的",
+  appId: "貼你的"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+document.getElementById("form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const form = e.target;
+
+  await addDoc(collection(db, "workers"), {
+    name: form.name.value,
+    phone: form.phone.value,
+    line: form.line.value,
+    type: form.type.value,
+    exp: form.exp.value,
+    createdAt: new Date()
+  });
+
+  alert("已加入人力名單");
+  form.reset();
+});
+</script>
 
 </body>
 </html>
