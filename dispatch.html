@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>派工評分系統</title>
+<title>派工系統</title>
 
 <style>
 body{
@@ -12,77 +12,118 @@ body{
   background:#f3f4f6;
 }
 
-.wrapper{
+.container{
   max-width:900px;
-  margin:30px auto;
+  margin:20px auto;
+  padding:10px;
+}
+
+/* 卡片 */
+.card{
   background:#fff;
-  padding:20px;
+  padding:18px;
   border-radius:10px;
+  margin-bottom:16px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.05);
 }
 
 h2{
-  margin-top:0;
+  margin-bottom:12px;
 }
 
-.row{
-  display:flex;
+/* 表單 */
+.form{
+  display:grid;
+  grid-template-columns:1fr 1fr;
   gap:10px;
-  margin-bottom:10px;
+}
+
+.full{
+  grid-column:1/3;
 }
 
 input,select{
-  flex:1;
-  padding:8px;
+  width:100%;
+  padding:10px;
+  border:1px solid #ccc;
+  border-radius:6px;
+  font-size:14px;
 }
 
 button{
-  padding:8px 12px;
+  padding:10px;
   border:none;
-  background:#111;
-  color:#fff;
   border-radius:6px;
+  background:#111;
+  color:white;
+  font-size:14px;
+  cursor:pointer;
 }
 
+/* 表格 */
 table{
   width:100%;
   border-collapse:collapse;
   margin-top:10px;
 }
 
+th{
+  background:#f9fafb;
+}
+
 th,td{
   border:1px solid #ddd;
-  padding:8px;
+  padding:10px;
   text-align:center;
+}
+
+.delete{
+  background:#dc2626;
+}
+
+/* 手機優化 */
+@media(max-width:600px){
+  .form{
+    grid-template-columns:1fr;
+  }
+  .full{
+    grid-column:1;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="wrapper">
+<div class="container">
 
+<!-- 新增員工 -->
+<div class="card">
 <h2>新增員工</h2>
 
-<div class="row">
+<div class="form">
 <input id="name" placeholder="姓名">
 <input id="phone" placeholder="電話">
-<button onclick="addWorker()">新增</button>
+<button class="full" onclick="addWorker()">新增員工</button>
 </div>
 
+</div>
+
+<!-- 員工列表 -->
+<div class="card">
 <h2>員工列表</h2>
 <div id="workerList"></div>
+</div>
 
-<hr>
-
+<!-- 派工 -->
+<div class="card">
 <h2>派工 + 評分</h2>
 
-<div class="row">
+<div class="form">
 <select id="dispatchName"></select>
 <input id="location" placeholder="工作地點">
 <input id="date" type="date">
-</div>
 
-<div class="row">
 <select id="action">
 <option value="2">完成派工 +2</option>
 <option value="1">準時 +1</option>
@@ -92,11 +133,16 @@ th,td{
 <option value="-5">臨時取消 -5</option>
 </select>
 
-<button onclick="addDispatch()">送出</button>
+<button class="full" onclick="addDispatch()">送出派工</button>
 </div>
 
+</div>
+
+<!-- 派工紀錄 -->
+<div class="card">
 <h2>派工紀錄</h2>
 <div id="dispatchList"></div>
+</div>
 
 </div>
 
@@ -123,7 +169,7 @@ function addWorker(){
   loadSelect();
 }
 
-/* ========= 顯示員工 ========= */
+/* ========= 員工列表 ========= */
 function renderWorkers(){
   let workers = JSON.parse(localStorage.getItem("workers")) || [];
 
@@ -144,7 +190,7 @@ function renderWorkers(){
     <td>${w.phone}</td>
     <td>${w.score}</td>
     <td>
-      <button onclick="deleteWorker(${i})">刪除</button>
+      <button class="delete" onclick="deleteWorker(${i})">刪除</button>
     </td>
     </tr>
     `;
@@ -179,7 +225,7 @@ function loadSelect(){
   });
 }
 
-/* ========= 派工 + 評分 ========= */
+/* ========= 派工 ========= */
 function addDispatch(){
   const name = document.getElementById("dispatchName").value;
   const location = document.getElementById("location").value;
@@ -194,7 +240,6 @@ function addDispatch(){
   dispatch.push({name,location,date});
   localStorage.setItem("dispatch", JSON.stringify(dispatch));
 
-  // 評分
   let workers = JSON.parse(localStorage.getItem("workers")) || [];
 
   workers.forEach(w=>{
@@ -211,7 +256,7 @@ function addDispatch(){
   renderDispatch();
 }
 
-/* ========= 顯示派工 ========= */
+/* ========= 派工列表 ========= */
 function renderDispatch(){
   let list = JSON.parse(localStorage.getItem("dispatch")) || [];
 
