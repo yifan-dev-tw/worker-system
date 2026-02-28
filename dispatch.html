@@ -3,260 +3,249 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>員工請假管理系統</title>
+<title>派工評分系統</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #eef1f5;
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f3f4f6;
 }
 
-.header {
-  background: #2c3e50;
-  color: white;
-  padding: 14px;
-  text-align: center;
-  font-size: 18px;
+.wrapper{
+  max-width:900px;
+  margin:30px auto;
+  background:#fff;
+  padding:20px;
+  border-radius:10px;
 }
 
-.container {
-  max-width: 420px;
-  margin: auto;
-  padding: 12px;
+h2{
+  margin-top:0;
 }
 
-.card {
-  background: white;
-  border-radius: 10px;
-  padding: 12px;
-  margin-bottom: 12px;
+.row{
+  display:flex;
+  gap:10px;
+  margin-bottom:10px;
 }
 
-input, select, textarea {
-  width: 100%;
-  padding: 6px;
-  margin-top: 6px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  font-size: 13px;
-  box-sizing: border-box;
+input,select{
+  flex:1;
+  padding:8px;
 }
 
-textarea { height: 45px; }
-
-button {
-  width: 100%;
-  padding: 8px;
-  margin-top: 8px;
-  border: none;
-  border-radius: 6px;
-  background: #3498db;
-  color: white;
+button{
+  padding:8px 12px;
+  border:none;
+  background:#111;
+  color:#fff;
+  border-radius:6px;
 }
 
-.workerTitle {
-  font-weight: bold;
-  margin-top: 10px;
-  border-bottom: 1px solid #ddd;
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
 }
 
-.recordLine {
-  font-size: 13px;
-  padding: 4px 0;
-}
-
-.urgent {
-  color: red;
-  font-weight: bold;
-}
-
-.statLine {
-  font-size: 13px;
-  padding: 3px 0;
+th,td{
+  border:1px solid #ddd;
+  padding:8px;
+  text-align:center;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">員工請假管理系統</div>
+<div class="wrapper">
 
-<div class="container">
+<h2>新增員工</h2>
 
-<div class="card">
-  新增員工
-  <input id="newWorker">
-  <button onclick="addWorker()">加入員工</button>
+<div class="row">
+<input id="name" placeholder="姓名">
+<input id="phone" placeholder="電話">
+<button onclick="addWorker()">新增</button>
 </div>
 
-<div class="card">
-  請假登記
-  <select id="workerSelect"></select>
+<h2>員工列表</h2>
+<div id="workerList"></div>
 
-  請假日期
-  <input type="date" id="date">
+<hr>
 
-  請假類型
-  <select id="leaveType">
-    <option value="提前請假">提前請假</option>
-    <option value="臨時請假">臨時請假</option>
-  </select>
+<h2>派工 + 評分</h2>
 
-  請假事由
-  <input id="reason">
-
-  備註
-  <textarea id="note"></textarea>
-
-  提出日期
-  <input type="date" id="reportDate">
-
-  提出時間
-  <input type="time" id="reportTime">
-
-  告知對象
-  <select id="reportTo">
-    <option value="淦哥">淦哥</option>
-    <option value="嫂子">嫂子</option>
-  </select>
-
-  <button onclick="addLeave()">送出</button>
+<div class="row">
+<select id="dispatchName"></select>
+<input id="location" placeholder="工作地點">
+<input id="date" type="date">
 </div>
 
-<div class="card">
-  數據統計
-  <div id="stats"></div>
+<div class="row">
+<select id="action">
+<option value="2">完成派工 +2</option>
+<option value="1">準時 +1</option>
+<option value="-3">遲到 -3</option>
+<option value="-10">未到 -10</option>
+<option value="-1">請假 -1</option>
+<option value="-5">臨時取消 -5</option>
+</select>
 
-  <button onclick="clearAll()" style="background:#e74c3c;">
-清除所有紀錄
-</button>
+<button onclick="addDispatch()">送出</button>
 </div>
 
-<div class="card">
-  請假紀錄
-  <div id="list"></div>
-</div>
+<h2>派工紀錄</h2>
+<div id="dispatchList"></div>
 
 </div>
 
 <script>
-let workers = JSON.parse(localStorage.getItem("workers")) || [];
-let leaves = JSON.parse(localStorage.getItem("leaves")) || [];
 
-function save() {
+/* ========= 新增員工 ========= */
+function addWorker(){
+  const name = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
+
+  if(!name) return alert("請輸入姓名");
+
+  let workers = JSON.parse(localStorage.getItem("workers")) || [];
+
+  workers.push({
+    name,
+    phone,
+    score:0
+  });
+
   localStorage.setItem("workers", JSON.stringify(workers));
-  localStorage.setItem("leaves", JSON.stringify(leaves));
+
+  renderWorkers();
+  loadSelect();
 }
 
-function renderWorkers() {
-  const select = document.getElementById("workerSelect");
+/* ========= 顯示員工 ========= */
+function renderWorkers(){
+  let workers = JSON.parse(localStorage.getItem("workers")) || [];
+
+  let html = `
+  <table>
+  <tr>
+  <th>姓名</th>
+  <th>電話</th>
+  <th>分數</th>
+  <th>操作</th>
+  </tr>
+  `;
+
+  workers.forEach((w,i)=>{
+    html += `
+    <tr>
+    <td>${w.name}</td>
+    <td>${w.phone}</td>
+    <td>${w.score}</td>
+    <td>
+      <button onclick="deleteWorker(${i})">刪除</button>
+    </td>
+    </tr>
+    `;
+  });
+
+  html += "</table>";
+
+  document.getElementById("workerList").innerHTML = html;
+}
+
+/* ========= 刪除員工 ========= */
+function deleteWorker(i){
+  let workers = JSON.parse(localStorage.getItem("workers")) || [];
+  workers.splice(i,1);
+  localStorage.setItem("workers", JSON.stringify(workers));
+  renderWorkers();
+  loadSelect();
+}
+
+/* ========= 下拉 ========= */
+function loadSelect(){
+  let workers = JSON.parse(localStorage.getItem("workers")) || [];
+  let select = document.getElementById("dispatchName");
+
   select.innerHTML = "";
-  workers.forEach(w => select.innerHTML += `<option>${w}</option>`);
-}
 
-function renderLeaves() {
-  const list = document.getElementById("list");
-  list.innerHTML = "";
-
-  const grouped = {};
-  leaves.forEach(l => {
-    if (!grouped[l.worker]) grouped[l.worker] = [];
-    grouped[l.worker].push(l);
-  });
-
-  Object.keys(grouped).forEach(worker => {
-    list.innerHTML += `<div class="workerTitle">${worker}</div>`;
-
-    grouped[worker].forEach(l => {
-  list.innerHTML += `
-    <div class="recordLine">
-      ${l.date} ｜ 
-      <span class="${l.type === '臨時請假' ? 'urgent' : ''}">
-        ${l.type}
-      </span>
-      ｜ ${l.reason || "-"}
-      ${l.note ? "｜ 備註：" + l.note : ""}
-      <br>
-      提出：${l.reportDate || "-"} ${l.reportTime || ""} → ${l.reportTo || "-"}
-    </div>
-  `;
-});
+  workers.forEach(w=>{
+    let op = document.createElement("option");
+    op.value = w.name;
+    op.textContent = w.name;
+    select.appendChild(op);
   });
 }
 
-function renderStats() {
-  const stats = document.getElementById("stats");
-  stats.innerHTML = "";
-
-  let total = leaves.length;
-  let urgent = leaves.filter(l => l.type === "臨時請假").length;
-  let advance = total - urgent;
-
-  stats.innerHTML = `
-    <div class="statLine">總請假：${total}</div>
-    <div class="statLine">提前請假：${advance}</div>
-    <div class="statLine">臨時請假：${urgent}</div>
-  `;
-}
-
-function addWorker() {
-  const name = document.getElementById("newWorker").value;
-  if (!name) return;
-
-  if (!workers.includes(name)) workers.push(name);
-
-  document.getElementById("newWorker").value = "";
-  save();
-  renderWorkers();
-}
-
-function addLeave() {
-  const worker = document.getElementById("workerSelect").value;
+/* ========= 派工 + 評分 ========= */
+function addDispatch(){
+  const name = document.getElementById("dispatchName").value;
+  const location = document.getElementById("location").value;
   const date = document.getElementById("date").value;
-  const type = document.getElementById("leaveType").value;
-  const reason = document.getElementById("reason").value;
-  const note = document.getElementById("note").value;
+  const scoreChange = parseInt(document.getElementById("action").value);
 
-  const reportDate = document.getElementById("reportDate").value;
-  const reportTime = document.getElementById("reportTime").value;
-  const reportTo = document.getElementById("reportTo").value;
+  if(!name || !location || !date){
+    return alert("請填完整");
+  }
 
-  if (!worker || !date) return;
+  let dispatch = JSON.parse(localStorage.getItem("dispatch")) || [];
+  dispatch.push({name,location,date});
+  localStorage.setItem("dispatch", JSON.stringify(dispatch));
 
-  leaves.push({
-    worker,
-    date,
-    type,
-    reason,
-    note,
-    reportDate,
-    reportTime,
-    reportTo
+  // 評分
+  let workers = JSON.parse(localStorage.getItem("workers")) || [];
+
+  workers.forEach(w=>{
+    if(w.name === name){
+      w.score += scoreChange;
+      if(w.score < 0) w.score = 0;
+      if(w.score > 100) w.score = 100;
+    }
   });
 
-  save();
-  renderLeaves();
-  renderStats();
-}
-
-renderWorkers();
-renderLeaves();
-renderStats();
-
-function clearAll() {
-  if (!confirm("確定要清除所有資料嗎？")) return;
-
-  localStorage.removeItem("workers");
-  localStorage.removeItem("leaves");
-
-  workers = [];
-  leaves = [];
+  localStorage.setItem("workers", JSON.stringify(workers));
 
   renderWorkers();
-  renderLeaves();
-  renderStats();
+  renderDispatch();
 }
+
+/* ========= 顯示派工 ========= */
+function renderDispatch(){
+  let list = JSON.parse(localStorage.getItem("dispatch")) || [];
+
+  let html = `
+  <table>
+  <tr>
+  <th>姓名</th>
+  <th>地點</th>
+  <th>日期</th>
+  </tr>
+  `;
+
+  list.forEach(d=>{
+    html += `
+    <tr>
+    <td>${d.name}</td>
+    <td>${d.location}</td>
+    <td>${d.date}</td>
+    </tr>
+    `;
+  });
+
+  html += "</table>";
+
+  document.getElementById("dispatchList").innerHTML = html;
+}
+
+/* ========= 初始化 ========= */
+window.onload = function(){
+  renderWorkers();
+  renderDispatch();
+  loadSelect();
+}
+
 </script>
 
 </body>
