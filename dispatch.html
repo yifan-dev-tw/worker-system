@@ -18,20 +18,13 @@ body{
   padding:10px;
 }
 
-/* 卡片 */
 .card{
   background:#fff;
   padding:18px;
   border-radius:10px;
   margin-bottom:16px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.05);
 }
 
-h2{
-  margin-bottom:12px;
-}
-
-/* 表單 */
 .form{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -43,52 +36,35 @@ h2{
 }
 
 input,select{
-  width:100%;
   padding:10px;
-  border:1px solid #ccc;
-  border-radius:6px;
-  font-size:14px;
 }
 
 button{
   padding:10px;
-  border:none;
-  border-radius:6px;
   background:#111;
   color:white;
-  font-size:14px;
-  cursor:pointer;
+  border:none;
+  border-radius:6px;
 }
 
-/* 表格 */
 table{
   width:100%;
   border-collapse:collapse;
   margin-top:10px;
 }
 
-th{
-  background:#f9fafb;
-}
-
 th,td{
   border:1px solid #ddd;
-  padding:10px;
+  padding:8px;
   text-align:center;
 }
 
-.delete{
-  background:#dc2626;
-}
+.plus{color:green;}
+.minus{color:red;}
 
-/* 手機優化 */
 @media(max-width:600px){
-  .form{
-    grid-template-columns:1fr;
-  }
-  .full{
-    grid-column:1;
-  }
+  .form{grid-template-columns:1fr;}
+  .full{grid-column:1;}
 }
 </style>
 </head>
@@ -100,16 +76,14 @@ th,td{
 <!-- 新增員工 -->
 <div class="card">
 <h2>新增員工</h2>
-
 <div class="form">
 <input id="name" placeholder="姓名">
 <input id="phone" placeholder="電話">
-<button class="full" onclick="addWorker()">新增員工</button>
+<button class="full" onclick="addWorker()">新增</button>
+</div>
 </div>
 
-</div>
-
-<!-- 員工列表 -->
+<!-- 員工 -->
 <div class="card">
 <h2>員工列表</h2>
 <div id="workerList"></div>
@@ -133,7 +107,7 @@ th,td{
 <option value="-5">臨時取消 -5</option>
 </select>
 
-<button class="full" onclick="addDispatch()">送出派工</button>
+<button class="full" onclick="addDispatch()">送出</button>
 </div>
 
 </div>
@@ -144,11 +118,17 @@ th,td{
 <div id="dispatchList"></div>
 </div>
 
+<!-- 評分紀錄 -->
+<div class="card">
+<h2>評分紀錄</h2>
+<div id="scoreList"></div>
+</div>
+
 </div>
 
 <script>
 
-/* ========= 新增員工 ========= */
+/* 新增員工 */
 function addWorker(){
   const name = document.getElementById("name").value;
   const phone = document.getElementById("phone").value;
@@ -157,60 +137,33 @@ function addWorker(){
 
   let workers = JSON.parse(localStorage.getItem("workers")) || [];
 
-  workers.push({
-    name,
-    phone,
-    score:0
-  });
-
+  workers.push({name,phone,score:0});
   localStorage.setItem("workers", JSON.stringify(workers));
 
   renderWorkers();
   loadSelect();
 }
 
-/* ========= 員工列表 ========= */
+/* 員工列表 */
 function renderWorkers(){
   let workers = JSON.parse(localStorage.getItem("workers")) || [];
 
-  let html = `
-  <table>
-  <tr>
-  <th>姓名</th>
-  <th>電話</th>
-  <th>分數</th>
-  <th>操作</th>
-  </tr>
-  `;
+  let html = `<table>
+  <tr><th>姓名</th><th>電話</th><th>分數</th></tr>`;
 
-  workers.forEach((w,i)=>{
-    html += `
-    <tr>
+  workers.forEach(w=>{
+    html += `<tr>
     <td>${w.name}</td>
     <td>${w.phone}</td>
     <td>${w.score}</td>
-    <td>
-      <button class="delete" onclick="deleteWorker(${i})">刪除</button>
-    </td>
-    </tr>
-    `;
+    </tr>`;
   });
 
   html += "</table>";
-
   document.getElementById("workerList").innerHTML = html;
 }
 
-/* ========= 刪除員工 ========= */
-function deleteWorker(i){
-  let workers = JSON.parse(localStorage.getItem("workers")) || [];
-  workers.splice(i,1);
-  localStorage.setItem("workers", JSON.stringify(workers));
-  renderWorkers();
-  loadSelect();
-}
-
-/* ========= 下拉 ========= */
+/* 下拉 */
 function loadSelect(){
   let workers = JSON.parse(localStorage.getItem("workers")) || [];
   let select = document.getElementById("dispatchName");
@@ -225,23 +178,25 @@ function loadSelect(){
   });
 }
 
-/* ========= 派工 ========= */
+/* 派工 + 評分 */
 function addDispatch(){
   const name = document.getElementById("dispatchName").value;
   const location = document.getElementById("location").value;
   const date = document.getElementById("date").value;
   const scoreChange = parseInt(document.getElementById("action").value);
+  const actionText = document.getElementById("action").selectedOptions[0].text;
 
   if(!name || !location || !date){
     return alert("請填完整");
   }
 
+  // 派工
   let dispatch = JSON.parse(localStorage.getItem("dispatch")) || [];
   dispatch.push({name,location,date});
   localStorage.setItem("dispatch", JSON.stringify(dispatch));
 
+  // 評分
   let workers = JSON.parse(localStorage.getItem("workers")) || [];
-
   workers.forEach(w=>{
     if(w.name === name){
       w.score += scoreChange;
@@ -249,45 +204,67 @@ function addDispatch(){
       if(w.score > 100) w.score = 100;
     }
   });
-
   localStorage.setItem("workers", JSON.stringify(workers));
+
+  // 評分紀錄
+  let scores = JSON.parse(localStorage.getItem("scores")) || [];
+  scores.push({
+    name,
+    action: actionText,
+    score: scoreChange,
+    date
+  });
+  localStorage.setItem("scores", JSON.stringify(scores));
 
   renderWorkers();
   renderDispatch();
+  renderScore();
 }
 
-/* ========= 派工列表 ========= */
+/* 派工列表 */
 function renderDispatch(){
   let list = JSON.parse(localStorage.getItem("dispatch")) || [];
 
-  let html = `
-  <table>
-  <tr>
-  <th>姓名</th>
-  <th>地點</th>
-  <th>日期</th>
-  </tr>
-  `;
+  let html = `<table>
+  <tr><th>姓名</th><th>地點</th><th>日期</th></tr>`;
 
   list.forEach(d=>{
-    html += `
-    <tr>
+    html += `<tr>
     <td>${d.name}</td>
     <td>${d.location}</td>
     <td>${d.date}</td>
-    </tr>
-    `;
+    </tr>`;
   });
 
   html += "</table>";
-
   document.getElementById("dispatchList").innerHTML = html;
 }
 
-/* ========= 初始化 ========= */
+/* 評分紀錄 */
+function renderScore(){
+  let list = JSON.parse(localStorage.getItem("scores")) || [];
+
+  let html = `<table>
+  <tr><th>姓名</th><th>動作</th><th>分數</th><th>日期</th></tr>`;
+
+  list.forEach(s=>{
+    html += `<tr>
+    <td>${s.name}</td>
+    <td>${s.action}</td>
+    <td class="${s.score>0?'plus':'minus'}">${s.score}</td>
+    <td>${s.date}</td>
+    </tr>`;
+  });
+
+  html += "</table>";
+  document.getElementById("scoreList").innerHTML = html;
+}
+
+/* 初始化 */
 window.onload = function(){
   renderWorkers();
   renderDispatch();
+  renderScore();
   loadSelect();
 }
 
