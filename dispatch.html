@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>派工系統</title>
+<title>派工評分系統</title>
 
 <style>
 body{
@@ -23,6 +23,11 @@ body{
   padding:18px;
   border-radius:10px;
   margin-bottom:16px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.05);
+}
+
+h2{
+  margin-bottom:12px;
 }
 
 .form{
@@ -37,14 +42,21 @@ body{
 
 input,select{
   padding:10px;
+  border:1px solid #ccc;
+  border-radius:6px;
 }
 
 button{
   padding:10px;
-  background:#111;
-  color:white;
   border:none;
   border-radius:6px;
+  background:#111;
+  color:white;
+  cursor:pointer;
+}
+
+.delete{
+  background:#dc2626;
 }
 
 table{
@@ -53,9 +65,13 @@ table{
   margin-top:10px;
 }
 
+th{
+  background:#f9fafb;
+}
+
 th,td{
   border:1px solid #ddd;
-  padding:8px;
+  padding:10px;
   text-align:center;
 }
 
@@ -79,11 +95,11 @@ th,td{
 <div class="form">
 <input id="name" placeholder="姓名">
 <input id="phone" placeholder="電話">
-<button class="full" onclick="addWorker()">新增</button>
+<button class="full" onclick="addWorker()">新增員工</button>
 </div>
 </div>
 
-<!-- 員工 -->
+<!-- 員工列表 -->
 <div class="card">
 <h2>員工列表</h2>
 <div id="workerList"></div>
@@ -107,7 +123,7 @@ th,td{
 <option value="-5">臨時取消 -5</option>
 </select>
 
-<button class="full" onclick="addDispatch()">送出</button>
+<button class="full" onclick="addDispatch()">送出派工</button>
 </div>
 
 </div>
@@ -128,7 +144,7 @@ th,td{
 
 <script>
 
-/* 新增員工 */
+/* ========= 新增員工 ========= */
 function addWorker(){
   const name = document.getElementById("name").value;
   const phone = document.getElementById("phone").value;
@@ -144,26 +160,48 @@ function addWorker(){
   loadSelect();
 }
 
-/* 員工列表 */
+/* ========= 員工列表 ========= */
 function renderWorkers(){
   let workers = JSON.parse(localStorage.getItem("workers")) || [];
 
-  let html = `<table>
-  <tr><th>姓名</th><th>電話</th><th>分數</th></tr>`;
+  let html = `
+  <table>
+  <tr>
+  <th>姓名</th>
+  <th>電話</th>
+  <th>分數</th>
+  <th>操作</th>
+  </tr>
+  `;
 
-  workers.forEach(w=>{
-    html += `<tr>
+  workers.forEach((w,i)=>{
+    html += `
+    <tr>
     <td>${w.name}</td>
     <td>${w.phone}</td>
     <td>${w.score}</td>
-    </tr>`;
+    <td>
+      <button class="delete" onclick="deleteWorker(${i})">刪除</button>
+    </td>
+    </tr>
+    `;
   });
 
   html += "</table>";
   document.getElementById("workerList").innerHTML = html;
 }
 
-/* 下拉 */
+/* ========= 刪除員工 ========= */
+function deleteWorker(i){
+  let workers = JSON.parse(localStorage.getItem("workers")) || [];
+  workers.splice(i,1);
+  localStorage.setItem("workers", JSON.stringify(workers));
+
+  renderWorkers();
+  loadSelect();
+}
+
+/* ========= 下拉 ========= */
 function loadSelect(){
   let workers = JSON.parse(localStorage.getItem("workers")) || [];
   let select = document.getElementById("dispatchName");
@@ -178,7 +216,7 @@ function loadSelect(){
   });
 }
 
-/* 派工 + 評分 */
+/* ========= 派工 + 評分 ========= */
 function addDispatch(){
   const name = document.getElementById("dispatchName").value;
   const location = document.getElementById("location").value;
@@ -190,12 +228,12 @@ function addDispatch(){
     return alert("請填完整");
   }
 
-  // 派工
+  /* 派工 */
   let dispatch = JSON.parse(localStorage.getItem("dispatch")) || [];
   dispatch.push({name,location,date});
   localStorage.setItem("dispatch", JSON.stringify(dispatch));
 
-  // 評分
+  /* 評分 */
   let workers = JSON.parse(localStorage.getItem("workers")) || [];
   workers.forEach(w=>{
     if(w.name === name){
@@ -206,14 +244,9 @@ function addDispatch(){
   });
   localStorage.setItem("workers", JSON.stringify(workers));
 
-  // 評分紀錄
+  /* 評分紀錄 */
   let scores = JSON.parse(localStorage.getItem("scores")) || [];
-  scores.push({
-    name,
-    action: actionText,
-    score: scoreChange,
-    date
-  });
+  scores.push({name,action:actionText,score:scoreChange,date});
   localStorage.setItem("scores", JSON.stringify(scores));
 
   renderWorkers();
@@ -221,46 +254,89 @@ function addDispatch(){
   renderScore();
 }
 
-/* 派工列表 */
+/* ========= 派工紀錄 ========= */
 function renderDispatch(){
   let list = JSON.parse(localStorage.getItem("dispatch")) || [];
 
-  let html = `<table>
-  <tr><th>姓名</th><th>地點</th><th>日期</th></tr>`;
+  let html = `
+  <table>
+  <tr>
+  <th>姓名</th>
+  <th>地點</th>
+  <th>日期</th>
+  <th>操作</th>
+  </tr>
+  `;
 
-  list.forEach(d=>{
-    html += `<tr>
+  list.forEach((d,i)=>{
+    html += `
+    <tr>
     <td>${d.name}</td>
     <td>${d.location}</td>
     <td>${d.date}</td>
-    </tr>`;
+    <td>
+      <button class="delete" onclick="deleteDispatch(${i})">刪除</button>
+    </td>
+    </tr>
+    `;
   });
 
   html += "</table>";
   document.getElementById("dispatchList").innerHTML = html;
 }
 
-/* 評分紀錄 */
+/* ========= 刪除派工 ========= */
+function deleteDispatch(i){
+  let list = JSON.parse(localStorage.getItem("dispatch")) || [];
+  list.splice(i,1);
+  localStorage.setItem("dispatch", JSON.stringify(list));
+
+  renderDispatch();
+}
+
+/* ========= 評分紀錄 ========= */
 function renderScore(){
   let list = JSON.parse(localStorage.getItem("scores")) || [];
 
-  let html = `<table>
-  <tr><th>姓名</th><th>動作</th><th>分數</th><th>日期</th></tr>`;
+  let html = `
+  <table>
+  <tr>
+  <th>姓名</th>
+  <th>動作</th>
+  <th>分數</th>
+  <th>日期</th>
+  <th>操作</th>
+  </tr>
+  `;
 
-  list.forEach(s=>{
-    html += `<tr>
+  list.forEach((s,i)=>{
+    html += `
+    <tr>
     <td>${s.name}</td>
     <td>${s.action}</td>
     <td class="${s.score>0?'plus':'minus'}">${s.score}</td>
     <td>${s.date}</td>
-    </tr>`;
+    <td>
+      <button class="delete" onclick="deleteScore(${i})">刪除</button>
+    </td>
+    </tr>
+    `;
   });
 
   html += "</table>";
   document.getElementById("scoreList").innerHTML = html;
 }
 
-/* 初始化 */
+/* ========= 刪除評分 ========= */
+function deleteScore(i){
+  let list = JSON.parse(localStorage.getItem("scores")) || [];
+  list.splice(i,1);
+  localStorage.setItem("scores", JSON.stringify(list));
+
+  renderScore();
+}
+
+/* ========= 初始化 ========= */
 window.onload = function(){
   renderWorkers();
   renderDispatch();
