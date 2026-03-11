@@ -11,7 +11,6 @@
 body{
 font-family:-apple-system;
 background:#f3f4f6;
-margin:0;
 padding:15px;
 }
 
@@ -22,29 +21,38 @@ margin:auto;
 
 h2{
 text-align:center;
-margin-bottom:10px;
+margin-bottom:15px;
 }
 
-button{
-border:none;
-border-radius:6px;
+.card{
+background:white;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+}
+
+input{
+width:100%;
 padding:10px;
+margin-bottom:8px;
+border:1px solid #ddd;
+border-radius:6px;
 font-size:14px;
 }
 
-.add{
+button{
+width:100%;
+padding:10px;
 background:#16a34a;
 color:white;
-width:100%;
-margin-bottom:10px;
+border:none;
+border-radius:6px;
+font-size:14px;
 }
 
 table{
 width:100%;
 border-collapse:collapse;
-background:white;
-border-radius:8px;
-overflow:hidden;
 font-size:14px;
 }
 
@@ -55,28 +63,23 @@ padding:8px;
 }
 
 td{
-padding:6px;
+padding:8px;
 border-bottom:1px solid #eee;
 text-align:center;
 }
 
-input{
-width:100%;
-border:none;
-text-align:center;
-font-size:14px;
-}
-
 .delete{
 background:#dc2626;
-color:white;
-padding:6px 8px;
+padding:4px 8px;
 font-size:12px;
+border-radius:4px;
+color:white;
+border:none;
 }
 
 .total{
-background:#f9fafb;
 font-weight:bold;
+background:#f9fafb;
 }
 
 </style>
@@ -89,7 +92,17 @@ font-weight:bold;
 
 <h2>雅偲科技-大園蝦皮</h2>
 
-<button class="add" onclick="addRow()">新增紀錄</button>
+<div class="card">
+
+<input type="date" id="date">
+<input type="number" id="work" placeholder="工數">
+<input type="number" id="money" placeholder="金額">
+
+<button onclick="addRecord()">新增記錄</button>
+
+</div>
+
+<div class="card">
 
 <table>
 
@@ -102,7 +115,7 @@ font-weight:bold;
 </tr>
 </thead>
 
-<tbody id="tbody"></tbody>
+<tbody id="records"></tbody>
 
 <tfoot>
 <tr class="total">
@@ -114,6 +127,8 @@ font-weight:bold;
 </tfoot>
 
 </table>
+
+</div>
 
 </div>
 
@@ -131,81 +146,66 @@ let saved=localStorage.getItem("dispatchData")
 
 if(saved){
 data=JSON.parse(saved)
-data.forEach(addRowFromData)
+render()
 }
 
-calculate()
 }
 
-function addRow(){
+function addRecord(){
 
-let rowData={
-date:"",
-work:0,
-money:0
+let date=document.getElementById("date").value
+let work=document.getElementById("work").value
+let money=document.getElementById("money").value
+
+if(!date)return
+
+let record={
+date:date,
+work:Number(work),
+money:Number(money)
 }
 
-data.push(rowData)
+data.push(record)
 
-addRowFromData(rowData)
-
+render()
 save()
+
+document.getElementById("work").value=""
+document.getElementById("money").value=""
+
 }
 
-function addRowFromData(rowData){
+function deleteRecord(index){
 
-let tbody=document.getElementById("tbody")
+data.splice(index,1)
 
-let row=document.createElement("tr")
-
-row.innerHTML=`
-<td><input type="date" value="${rowData.date}"></td>
-<td><input type="number" value="${rowData.work}"></td>
-<td><input type="number" value="${rowData.money}"></td>
-<td><button class="delete">刪除</button></td>
-`
-
-tbody.appendChild(row)
-
-let inputs=row.querySelectorAll("input")
-
-inputs.forEach((input,index)=>{
-
-input.onchange=function(){
-
-rowData.date=inputs[0].value
-rowData.work=Number(inputs[1].value)
-rowData.money=Number(inputs[2].value)
-
-calculate()
+render()
 save()
 
 }
 
-})
+function render(){
 
-row.querySelector(".delete").onclick=function(){
+let tbody=document.getElementById("records")
 
-row.remove()
-
-data=data.filter(d=>d!==rowData)
-
-calculate()
-save()
-
-}
-
-}
-
-function calculate(){
+tbody.innerHTML=""
 
 let totalWork=0
 let totalMoney=0
 
-data.forEach(d=>{
+data.forEach((r,i)=>{
 
-totalWork+=Number(d.work)||0
-totalMoney+=Number(d.money)||0
+totalWork+=r.work
+totalMoney+=r.money
+
+tbody.innerHTML+=`
+<tr>
+<td>${r.date}</td>
+<td>${r.work}</td>
+<td>${r.money}</td>
+<td><button class="delete" onclick="deleteRecord(${i})">刪除</button></td>
+</tr>
+`
 
 })
 
