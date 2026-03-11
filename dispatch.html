@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -31,10 +32,16 @@ border-radius:10px;
 margin-bottom:15px;
 }
 
+.form-row{
+display:grid;
+grid-template-columns:1.5fr 1fr;
+gap:8px;
+margin-bottom:10px;
+}
+
 input{
 width:100%;
 padding:10px;
-margin-bottom:8px;
 border:1px solid #ddd;
 border-radius:6px;
 font-size:14px;
@@ -94,9 +101,13 @@ background:#f9fafb;
 
 <div class="card">
 
+<div class="form-row">
+
 <input type="date" id="date">
+
 <input type="number" id="work" placeholder="工數">
-<input type="number" id="money" placeholder="金額">
+
+</div>
 
 <button onclick="addRecord()">新增記錄</button>
 
@@ -107,23 +118,27 @@ background:#f9fafb;
 <table>
 
 <thead>
+
 <tr>
 <th>日期</th>
 <th>工數</th>
 <th>金額</th>
 <th></th>
 </tr>
+
 </thead>
 
 <tbody id="records"></tbody>
 
 <tfoot>
+
 <tr class="total">
 <td>合計</td>
 <td id="totalWork">0</td>
 <td id="totalMoney">0</td>
 <td></td>
 </tr>
+
 </tfoot>
 
 </table>
@@ -134,10 +149,14 @@ background:#f9fafb;
 
 <script>
 
+let price = 200
+
 let data=[]
 
 function save(){
+
 localStorage.setItem("dispatchData",JSON.stringify(data))
+
 }
 
 function load(){
@@ -145,8 +164,11 @@ function load(){
 let saved=localStorage.getItem("dispatchData")
 
 if(saved){
+
 data=JSON.parse(saved)
+
 render()
+
 }
 
 }
@@ -154,24 +176,28 @@ render()
 function addRecord(){
 
 let date=document.getElementById("date").value
-let work=document.getElementById("work").value
-let money=document.getElementById("money").value
 
-if(!date)return
+let work=document.getElementById("work").value
+
+if(!date || !work) return
+
+let money = work * price
 
 let record={
+
 date:date,
 work:Number(work),
-money:Number(money)
+money:money
+
 }
 
 data.push(record)
 
 render()
+
 save()
 
 document.getElementById("work").value=""
-document.getElementById("money").value=""
 
 }
 
@@ -180,6 +206,7 @@ function deleteRecord(index){
 data.splice(index,1)
 
 render()
+
 save()
 
 }
@@ -199,12 +226,16 @@ totalWork+=r.work
 totalMoney+=r.money
 
 tbody.innerHTML+=`
+
 <tr>
 <td>${r.date}</td>
 <td>${r.work}</td>
 <td>${r.money}</td>
-<td><button class="delete" onclick="deleteRecord(${i})">刪除</button></td>
+<td>
+<button class="delete" onclick="deleteRecord(${i})">刪除</button>
+</td>
 </tr>
+
 `
 
 })
@@ -219,4 +250,5 @@ load()
 </script>
 
 </body>
+
 </html>
